@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  background: #0a0a0a;
+  color: white;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, #1a1a1a 0%, #050505 70%);
+}
+
+.glow-card {
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.glow-card:hover {
+  border-color: #60a5fa;
+  box-shadow:
+    0 0 15px rgba(96, 165, 250, 0.4),
+    0 0 40px rgba(96, 165, 250, 0.15);
+  transform: translateY(-4px);
+}
