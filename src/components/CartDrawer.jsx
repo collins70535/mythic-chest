@@ -131,7 +131,7 @@ export default function CartDrawer() {
               </div>
               <Link
                 to="/checkout"
-                className="w-full rounded-xl bg-blue-500 py-4 font-semibold hover:bg-blue-400"
+                className="flex w-full items-center justify-center rounded-xl bg-blue-500 px-4 py-4 text-center font-semibold hover:bg-blue-400"
                 onClick={closeCart}
               >
                 Checkout
