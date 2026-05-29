@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import logo from "../assets/mc-logo.png"
 import { useCart } from "../context/useCart"
 
 const navLinks = [
@@ -16,9 +17,11 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/70 px-5 py-5 backdrop-blur md:px-8">
       <div className="flex items-center justify-between">
         <Link to="/" onClick={() => setIsMenuOpen(false)}>
-          <h1 className="text-2xl font-bold tracking-widest text-blue-400 md:text-3xl">
-            MYTHIC CHEST
-          </h1>
+          <img
+            src={logo}
+            alt="Mythic Chest"
+            className="h-16 w-auto md:h-20"
+          />
         </Link>
 
         <div className="hidden items-center gap-6 text-sm uppercase tracking-wider md:flex">

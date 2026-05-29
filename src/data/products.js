@@ -1,3 +1,7 @@
+import barbatosLupusImage from "../assets/products/barbatos-lupus.png"
+import rx78GundamImage from "../assets/products/rx-78-gundam.png"
+import wingZeroCustomImage from "../assets/products/wing-zero-custom.png"
+
 const products = [
   {
     id: 1,
@@ -15,8 +19,7 @@ const products = [
       "Flexible inner frame for dynamic posing",
       "Includes beam rifle, shield, and display accessories",
     ],
-    image:
-      "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop",
+    image: rx78GundamImage,
   },
 
   {
@@ -35,8 +38,7 @@ const products = [
       "Twin buster rifle loadout",
       "Premium decal sheet for Ver. Ka styling",
     ],
-    image:
-      "https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1200&auto=format&fit=crop",
+    image: wingZeroCustomImage,
   },
 
   {
@@ -55,8 +57,7 @@ const products = [
       "Large mace weapon system included",
       "Mechanical frame details visible through armor breaks",
     ],
-    image:
-      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop",
+    image: barbatosLupusImage,
   },
 ]
 
