@@ -6,11 +6,14 @@ export default function ProductCard({ product }) {
 
   return (
     <article className="glow-card flex h-full flex-col overflow-hidden rounded-2xl">
-      <Link to={`/product/${product.slug}`} className="block">
+      <Link
+        to={`/product/${product.slug}`}
+        className="flex aspect-square items-center justify-center bg-black p-4"
+      >
         <img
           src={product.image}
           alt={product.name}
-          className="h-72 w-full object-cover"
+          className="h-full w-full object-contain"
         />
       </Link>
 
