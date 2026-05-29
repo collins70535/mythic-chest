@@ -1,12 +1,12 @@
+import CategoryGrid from "../components/CategoryGrid"
 import Hero from "../components/Hero"
-import ProductGrid from "../components/ProductGrid"
-import products from "../data/products"
+import categories from "../data/categories"
 
 export default function HomePage() {
   return (
     <>
       <Hero />
-      <ProductGrid products={products} />
+      <CategoryGrid categories={categories} />
     </>
   )
 }
