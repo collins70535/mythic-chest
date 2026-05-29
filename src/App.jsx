@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 
+import CartDrawer from "./components/CartDrawer"
 import Navbar from "./components/Navbar"
+import { CartProvider } from "./context/CartContext"
 
 import HomePage from "./pages/HomePage"
 import ProductPage from "./pages/ProductPage"
@@ -8,14 +10,18 @@ import ProductPage from "./pages/ProductPage"
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen text-white">
-        <Navbar />
+      <CartProvider>
+        <div className="min-h-screen text-white">
+          <Navbar />
 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/product/:slug" element={<ProductPage />} />
-        </Routes>
-      </div>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/product/:slug" element={<ProductPage />} />
+          </Routes>
+
+          <CartDrawer />
+        </div>
+      </CartProvider>
     </BrowserRouter>
   )
 }

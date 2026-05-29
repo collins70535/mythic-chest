@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom"
+import { useCart } from "../context/useCart"
 
 export default function ProductCard({ product }) {
+  const { addItem } = useCart()
+
   return (
     <article className="glow-card flex h-full flex-col overflow-hidden rounded-2xl">
       <Link to={`/product/${product.slug}`} className="block">
@@ -33,7 +36,11 @@ export default function ProductCard({ product }) {
           {product.price}
         </p>
 
-        <button className="mt-auto w-full rounded-xl bg-zinc-800 py-3 transition hover:bg-blue-500">
+        <button
+          type="button"
+          className="mt-auto w-full rounded-xl bg-zinc-800 py-3 transition hover:bg-blue-500"
+          onClick={() => addItem(product)}
+        >
           Add to Cart
         </button>
       </div>

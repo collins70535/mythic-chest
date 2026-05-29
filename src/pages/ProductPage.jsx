@@ -1,8 +1,10 @@
 import { useParams } from "react-router-dom"
+import { useCart } from "../context/useCart"
 import products from "../data/products"
 
 export default function ProductPage() {
   const { slug } = useParams()
+  const { addItem } = useCart()
 
   const product = products.find(
     (item) => item.slug === slug
@@ -70,7 +72,11 @@ export default function ProductPage() {
             {product.price}
           </p>
 
-          <button className="px-8 py-4 rounded-xl bg-blue-500 hover:bg-blue-400 transition font-semibold">
+          <button
+            type="button"
+            className="px-8 py-4 rounded-xl bg-blue-500 hover:bg-blue-400 transition font-semibold"
+            onClick={() => addItem(product)}
+          >
             Add to Cart
           </button>
         </div>
