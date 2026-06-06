@@ -5,8 +5,8 @@ import { useCart } from "../context/useCart"
 
 const navLinks = [
   { label: "Shop", href: "/#shop" },
-  { label: "Collections", href: "/#collections" },
-  { label: "About", href: "/#about" },
+  { label: "Collections", href: "/#shop" },
+  { label: "About", href: "/about" },
 ]
 
 export default function Navbar() {

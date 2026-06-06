@@ -6,6 +6,7 @@ const products = [
   {
     id: 1,
     slug: "rx-78-gundam",
+    categoryId: "gundam-models",
     category: "Universal Century",
     series: "Mobile Suit Gundam",
     grade: "Master Grade",
@@ -13,7 +14,7 @@ const products = [
     price: "$89.99",
     stock: "In Stock",
     description:
-      "The legendary RX-78 Gundam featuring premium articulation, iconic panel detail, and a display-ready silhouette for Universal Century collectors.",
+      "The legendary RX-78 Gundam featuring awesome articulation, iconic panel detail, and a display-ready silhouette for Universal Century collectors.",
     features: [
       "Precision-molded armor with sharp panel definition",
       "Flexible inner frame for dynamic posing",
@@ -25,6 +26,7 @@ const products = [
   {
     id: 2,
     slug: "wing-zero-custom",
+    categoryId: "gundam-models",
     category: "Gundam Wing",
     series: "Endless Waltz",
     grade: "Master Grade Ver. Ka",
@@ -36,7 +38,7 @@ const products = [
     features: [
       "Layered wing binders with wide display range",
       "Twin buster rifle loadout",
-      "Premium decal sheet for Ver. Ka styling",
+      "Awesome decal sheet for Ver. Ka styling",
     ],
     image: wingZeroCustomImage,
   },
@@ -44,6 +46,7 @@ const products = [
   {
     id: 3,
     slug: "barbatos-lupus",
+    categoryId: "gundam-models",
     category: "Iron-Blooded Orphans",
     series: "Post Disaster",
     grade: "Full Mechanics",

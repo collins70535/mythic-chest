@@ -17,12 +17,12 @@ export default function Hero() {
             Collector Grade Kits
           </p>
           <h2 className="mb-6 text-5xl font-black leading-tight md:text-7xl">
-            Premium models for legendary builds.
+            Awesome models for legendary builds.
           </h2>
 
           <p className="max-w-xl text-lg leading-8 text-zinc-300">
-            Curated Gundam kits, collectibles, and premium hobby gear for
-            builders who demand display-worthy detail.
+            Model Kits and awesome hobby gear for builders who demand
+            display-worthy detail.
           </p>
 
           <a

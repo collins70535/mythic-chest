@@ -8,9 +8,9 @@ const categories = [
     name: "Gundam Models",
     eyebrow: "Master Grade / High Grade / Real Grade",
     description:
-      "Premium Gunpla kits for builders who want centerpiece models and classic shelf presence.",
+      "Awesome Gunpla kits for builders who want centerpiece models and classic shelf presence.",
     image: gundamModelsImage,
-    href: "/#gundam-models",
+    href: "/collections/gundam-models",
   },
   {
     id: "blokkees-champion",
@@ -19,7 +19,7 @@ const categories = [
     description:
       "Champion Class Blokkees kits with display-ready figures, accessories, and collector packaging.",
     image: blokkeesChampionImage,
-    href: "/#blokkees-champion",
+    href: "/collections/blokkees-champion",
   },
   {
     id: "action-bases",
@@ -28,7 +28,7 @@ const categories = [
     description:
       "Modular action bases, support arms, and posing adapters made for cleaner display setups.",
     image: actionBasesImage,
-    href: "/#action-bases",
+    href: "/collections/action-bases",
   },
 ]
 

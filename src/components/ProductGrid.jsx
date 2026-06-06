@@ -1,14 +1,18 @@
 import ProductCard from "./ProductCard"
 
-export default function ProductGrid({ products }) {
+export default function ProductGrid({
+  eyebrow = "Featured Stock",
+  products,
+  title = "Collector-ready kits",
+}) {
   return (
     <section id="shop" className="px-5 pb-24 md:px-8">
       <div className="mx-auto mb-10 max-w-6xl">
         <p className="mb-3 text-sm uppercase tracking-[0.3em] text-blue-400">
-          Featured Stock
+          {eyebrow}
         </p>
         <h2 className="text-3xl font-black md:text-4xl">
-          Collector-ready kits
+          {title}
         </h2>
       </div>
 
