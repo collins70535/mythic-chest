@@ -1,0 +1,30 @@
+.hof-watermarked::after {
+  content: "EUNICE BOBCATS • HALL OF FAME 2026";
+  position: absolute;
+  z-index: 20;
+  top: 50%;
+  left: 50%;
+  width: 130%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  padding: 0.65rem 1rem;
+  background: rgba(7, 29, 22, 0.42);
+  color: rgba(255, 255, 255, 0.72);
+  border-block: 1px solid rgba(213, 169, 47, 0.65);
+  font-size: clamp(0.65rem, 1.5vw, 1rem);
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  line-height: 1.35;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  user-select: none;
+}
+
+.hof-hero-watermark::after {
+  font-size: clamp(0.7rem, 1.4vw, 1rem);
+}
+
+.hof-shirt-watermark::after {
+  padding-block: 0.45rem;
+  font-size: clamp(0.55rem, 1.25vw, 0.85rem);
+}

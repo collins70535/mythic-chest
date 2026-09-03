@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import "./HallOfFamePage.css"
 import blackShirts from "../assets/hall-of-fame/black-shirts.png"
 import greenWhiteShirts from "../assets/hall-of-fame/green-white-shirts.png"
 import mitchellPhoto from "../assets/hall-of-fame/mitchell-number-7.jpg"
@@ -85,7 +86,9 @@ export default function HallOfFamePage() {
         <div className="relative min-w-0 max-md:order-first">
           <p className="relative z-10 mx-auto mb-6 max-w-xl border-l-4 border-[#d5a92f] bg-[#071d16]/85 px-5 py-4 text-sm leading-6 text-[#e9efe9] shadow-2xl">From earning <strong className="text-[#f0c752]">All-State - All District honors</strong>, to throwing for nearly <strong className="text-[#f0c752]">4,800 career yards</strong> and 42 passing TDs, Malcolm Mitchell left a lasting mark on Bobcat football.</p>
           <div className="absolute inset-[8%] rotate-[-12deg] rounded-[50%] border border-[#d5a92f]/40" aria-hidden="true" />
-          <img className="relative z-10 mx-auto aspect-[4/5] w-full max-w-[500px] border-8 border-[#f4efe3] object-cover shadow-2xl outline-2 outline-[#d5a92f]" src={mitchellPhoto} alt="Historic photograph of Mitchell wearing number 7 on the football field" />
+          <div className="hof-watermarked hof-hero-watermark relative z-10 mx-auto w-full max-w-[500px] border-8 border-[#f4efe3] shadow-2xl outline-2 outline-[#d5a92f]">
+            <img className="aspect-[4/5] w-full object-cover" src={mitchellPhoto} alt="Historic photograph of Mitchell wearing number 7 on the football field" />
+          </div>
         </div>
       </section>
 
@@ -103,7 +106,7 @@ export default function HallOfFamePage() {
                 <p className="mb-4 text-lg font-black uppercase text-[#0d3828]">Select your shirt</p>
                 <p className="mb-2 text-[10px] font-extrabold uppercase tracking-widest text-[#555e57]">Color</p>
                 <div className="mb-6 grid grid-cols-3 gap-2">{colors.map((option) => <button key={option.name} type="button" onClick={() => updateShirt({ color: option.name })} className={`flex min-h-12 items-center justify-center gap-2 border font-bold ${shirt.color === option.name ? 'border-2 border-[#0d3828] bg-[#edf4ef] text-[#0d3828]' : 'border-[#d6d5cf] bg-white'}`} aria-pressed={shirt.color === option.name}><span className="size-4 rounded-full border border-black/30" style={{background:option.swatch}} />{option.name}</button>)}</div>
-                <div className="mb-7 bg-[#09261c] p-3"><p className="mb-2 text-[11px] uppercase tracking-widest text-[#d8e4dc]"><strong className="text-[#f0c752]">{shirt.color}</strong> • Front &amp; back</p><div className="relative aspect-[1370/560] overflow-hidden bg-[#050706]"><img className={`absolute left-0 top-0 h-auto w-full max-w-none ${shirt.color === 'White' ? '-translate-y-1/2' : ''}`} src={selectedColor.image} alt={`${shirt.color} Hall of Fame shirt shown from the front and back`} /></div></div>
+                <div className="mb-7 bg-[#09261c] p-3"><p className="mb-2 text-[11px] uppercase tracking-widest text-[#d8e4dc]"><strong className="text-[#f0c752]">{shirt.color}</strong> • Front &amp; back</p><div className="hof-watermarked hof-shirt-watermark relative aspect-[1370/560] overflow-hidden bg-[#050706]"><img className={`absolute left-0 top-0 h-auto w-full max-w-none ${shirt.color === 'White' ? '-translate-y-1/2' : ''}`} src={selectedColor.image} alt={`${shirt.color} Hall of Fame shirt shown from the front and back`} /></div></div>
                 <p className="mb-2 text-[10px] font-extrabold uppercase tracking-widest text-[#555e57]">Size</p>
                 <div className="grid grid-cols-3 gap-2 md:grid-cols-6">{sizes.map((size) => <button key={size} type="button" onClick={() => updateShirt({ size })} className={`grid min-h-14 place-items-center border p-1 font-bold ${shirt.size === size ? 'border-2 border-[#0d3828] bg-[#edf4ef] text-[#0d3828]' : 'border-[#d6d5cf] bg-white'}`} aria-pressed={shirt.size === size}><span>{size}</span><small className="text-[10px] text-[#667068]">${prices[size]}</small></button>)}</div>
                 <div className="mt-6 flex items-center justify-between font-bold"><span>Quantity</span><div className="flex items-center border border-[#d6d5cf]"><button className="size-11 bg-[#f4f2ec] text-xl" type="button" onClick={() => updateShirt({quantity:Math.max(1,shirt.quantity-1)})} aria-label="Decrease quantity">−</button><output className="w-11 text-center">{shirt.quantity}</output><button className="size-11 bg-[#f4f2ec] text-xl" type="button" onClick={() => updateShirt({quantity:Math.min(12,shirt.quantity+1)})} aria-label="Increase quantity">+</button></div></div>
