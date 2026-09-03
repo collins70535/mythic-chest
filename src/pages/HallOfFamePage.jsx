@@ -85,6 +85,9 @@ export default function HallOfFamePage() {
 
   return (
     <main className="min-h-screen bg-[#f8f7f2] font-sans text-[#111512]">
+      <div className="flex min-h-11 items-center justify-center bg-[#d5a92f] px-4 py-2 text-center text-sm font-black uppercase tracking-[.12em] text-[#10140f] sm:text-base" role="status">
+        Ordering ends on September 18
+      </div>
       <header className="flex h-[78px] items-center justify-between border-b border-white/15 bg-[#0b2e22] px-5 text-white md:px-[5vw]">
         <a className="flex items-center gap-3 text-white no-underline" href="#hof-top" aria-label="Eunice Hall of Fame home">
           <span className="grid size-11 place-items-center rounded-full border-2 border-[#d5a92f] text-2xl font-black">E</span>
