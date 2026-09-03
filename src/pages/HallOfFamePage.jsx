@@ -97,7 +97,7 @@ export default function HallOfFamePage() {
       </section>
 
       <section id="hof-order" className="bg-gradient-to-br from-[#f8f7f2] to-[#eee9df] px-5 py-20 md:px-[6vw] md:py-24">
-        <div className="mb-12 max-w-2xl"><p className="mb-3 text-xs font-bold uppercase tracking-[.18em] text-[#9b7400]">Reserve yours</p><h2 className="mb-4 text-4xl font-black uppercase leading-none md:text-6xl">Build your shirt order.</h2><p className="leading-7 text-[#667068]">Choose your color, size, and quantity. Payment will be connected after the store migration is complete.</p></div>
+        <div className="mb-12 max-w-2xl"><p className="mb-3 text-xs font-bold uppercase tracking-[.18em] text-[#9b7400]">Reserve yours</p><h2 className="mb-4 text-4xl font-black uppercase leading-none md:text-6xl">Build your shirt order.</h2><p className="leading-7 text-[#667068]">Choose your color, size, and quantity.</p></div>
         <form className="grid max-w-[1180px] gap-8 lg:grid-cols-[1.3fr_.7fr]" onSubmit={reviewOrder}>
           <section className="border border-[#dcd8ce] bg-white p-5 shadow-xl md:p-10">
             <fieldset className="mb-10 border-0 border-b border-[#e4e0d7] p-0 pb-10">
