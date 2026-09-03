@@ -18,7 +18,10 @@ export default function HallOfFamePage() {
   const [nextId, setNextId] = useState(1)
   const [fulfillment, setFulfillment] = useState("Local Pickup")
   const [added, setAdded] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const [customer, setCustomer] = useState({ name: "", phone: "", email: "" })
+  const [checkoutStatus, setCheckoutStatus] = useState("idle")
+  const [checkoutError, setCheckoutError] = useState("")
+  const [paymentResult] = useState(() => new URLSearchParams(window.location.search).get("payment"))
 
   useEffect(() => {
     const previousTitle = document.title
@@ -48,7 +51,7 @@ export default function HallOfFamePage() {
   function updateShirt(changes) {
     setShirt((current) => ({ ...current, ...changes }))
     setAdded(false)
-    setSubmitted(false)
+    setCheckoutError("")
   }
 
   function addToCart() {
@@ -56,14 +59,28 @@ export default function HallOfFamePage() {
     setNextId((id) => id + 1)
     setShirt((current) => ({ ...current, color: "Green", size: "L", quantity: 1 }))
     setAdded(true)
-    setSubmitted(false)
+    setCheckoutError("")
   }
 
-  function reviewOrder(event) {
+  async function startCheckout(event) {
     event.preventDefault()
     if (cart.length === 0 || shipping === null) return
-    setSubmitted(true)
-    requestAnimationFrame(() => document.getElementById("hof-order-summary")?.scrollIntoView({ behavior: "smooth", block: "center" }))
+    setCheckoutStatus("loading")
+    setCheckoutError("")
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cart, customer, fulfillment }),
+      })
+      const result = await response.json()
+      if (!response.ok || !result.url) throw new Error(result.error || "Unable to start checkout.")
+      window.location.assign(result.url)
+    } catch (error) {
+      setCheckoutStatus("error")
+      setCheckoutError(error.message || "Unable to start checkout.")
+      requestAnimationFrame(() => document.getElementById("hof-order-summary")?.scrollIntoView({ behavior: "smooth", block: "center" }))
+    }
   }
 
   return (
@@ -97,8 +114,10 @@ export default function HallOfFamePage() {
       </section>
 
       <section id="hof-order" className="bg-gradient-to-br from-[#f8f7f2] to-[#eee9df] px-5 py-20 md:px-[6vw] md:py-24">
+        {paymentResult === "success" && <div className="mx-auto mb-8 max-w-[1180px] border-l-4 border-[#0d3828] bg-[#edf4ef] p-5 text-[#0d3828]" role="status"><strong className="block">Payment received.</strong><span className="text-sm">Thank you! Your Hall of Fame shirt order was completed through Stripe.</span></div>}
+        {paymentResult === "cancelled" && <div className="mx-auto mb-8 max-w-[1180px] border-l-4 border-[#d5a92f] bg-[#fff4d5] p-5 text-[#755500]" role="status"><strong className="block">Checkout cancelled.</strong><span className="text-sm">No payment was made. You can rebuild your cart whenever you’re ready.</span></div>}
         <div className="mb-12 max-w-2xl"><p className="mb-3 text-xs font-bold uppercase tracking-[.18em] text-[#9b7400]">Reserve yours</p><h2 className="mb-4 text-4xl font-black uppercase leading-none md:text-6xl">Build your shirt order.</h2><p className="leading-7 text-[#667068]">Choose your color, size, and quantity.</p></div>
-        <form className="grid max-w-[1180px] gap-8 lg:grid-cols-[1.3fr_.7fr]" onSubmit={reviewOrder}>
+        <form className="grid max-w-[1180px] gap-8 lg:grid-cols-[1.3fr_.7fr]" onSubmit={startCheckout}>
           <section className="border border-[#dcd8ce] bg-white p-5 shadow-xl md:p-10">
             <fieldset className="mb-10 border-0 border-b border-[#e4e0d7] p-0 pb-10">
               <legend className="mb-7 w-full text-2xl font-black uppercase"><span className="mr-3 inline-grid size-8 place-items-center rounded-full bg-[#0d3828] text-sm text-white">1</span>Choose your shirt</legend>
@@ -114,7 +133,7 @@ export default function HallOfFamePage() {
               <button className="mt-3 min-h-14 w-full rounded-sm bg-[#0d3828] font-extrabold text-white shadow-lg hover:bg-[#155039]" type="button" onClick={addToCart}>Add shirt to cart</button>
               {added && <p className="mt-3 border-l-4 border-[#d5a92f] bg-[#edf4ef] p-3 text-xs font-bold text-[#0d3828]" role="status">Added to cart. The shirt selector is ready for another order.</p>}
             </fieldset>
-            <fieldset className="mb-10 border-0 border-b border-[#e4e0d7] p-0 pb-10"><legend className="mb-7 w-full text-2xl font-black uppercase"><span className="mr-3 inline-grid size-8 place-items-center rounded-full bg-[#0d3828] text-sm text-white">2</span>Your details</legend><div className="grid gap-4 md:grid-cols-2"><label className="text-[10px] font-extrabold uppercase tracking-widest text-[#555e57]">Full name<input className="mt-2 block min-h-12 w-full border border-[#d3d1ca] px-3 text-base normal-case tracking-normal" name="name" autoComplete="name" required /></label><label className="text-[10px] font-extrabold uppercase tracking-widest text-[#555e57]">Phone<input className="mt-2 block min-h-12 w-full border border-[#d3d1ca] px-3 text-base normal-case tracking-normal" name="phone" autoComplete="tel" type="tel" required /></label><label className="text-[10px] font-extrabold uppercase tracking-widest text-[#555e57] md:col-span-2">Email<input className="mt-2 block min-h-12 w-full border border-[#d3d1ca] px-3 text-base normal-case tracking-normal" name="email" autoComplete="email" type="email" required /></label></div></fieldset>
+            <fieldset className="mb-10 border-0 border-b border-[#e4e0d7] p-0 pb-10"><legend className="mb-7 w-full text-2xl font-black uppercase"><span className="mr-3 inline-grid size-8 place-items-center rounded-full bg-[#0d3828] text-sm text-white">2</span>Your details</legend><div className="grid gap-4 md:grid-cols-2"><label className="text-[10px] font-extrabold uppercase tracking-widest text-[#555e57]">Full name<input className="mt-2 block min-h-12 w-full border border-[#d3d1ca] px-3 text-base normal-case tracking-normal" name="name" autoComplete="name" required value={customer.name} onChange={(event) => setCustomer((current) => ({...current,name:event.target.value}))} /></label><label className="text-[10px] font-extrabold uppercase tracking-widest text-[#555e57]">Phone<input className="mt-2 block min-h-12 w-full border border-[#d3d1ca] px-3 text-base normal-case tracking-normal" name="phone" autoComplete="tel" type="tel" required value={customer.phone} onChange={(event) => setCustomer((current) => ({...current,phone:event.target.value}))} /></label><label className="text-[10px] font-extrabold uppercase tracking-widest text-[#555e57] md:col-span-2">Email<input className="mt-2 block min-h-12 w-full border border-[#d3d1ca] px-3 text-base normal-case tracking-normal" name="email" autoComplete="email" type="email" required value={customer.email} onChange={(event) => setCustomer((current) => ({...current,email:event.target.value}))} /></label></div></fieldset>
             <fieldset className="border-0 p-0"><legend className="mb-7 w-full text-2xl font-black uppercase"><span className="mr-3 inline-grid size-8 place-items-center rounded-full bg-[#0d3828] text-sm text-white">3</span>Fulfillment</legend><div className="grid gap-3 md:grid-cols-2">{["Local Pickup","Delivery"].map((option) => <label className={`relative grid cursor-pointer grid-cols-[32px_1fr] p-5 ${fulfillment === option ? 'border-2 border-[#0d3828] bg-[#edf4ef]' : 'border border-[#d5d2c9]'}`} key={option}><input className="absolute opacity-0" type="radio" name="fulfillment" value={option} checked={fulfillment===option} onChange={() => setFulfillment(option)} /><span className="row-span-2 text-xl">{option === 'Local Pickup' ? '⌂' : '◇'}</span><strong className="text-sm">{option}</strong><small className="text-[#667068]">{option === 'Local Pickup' ? 'Customer will be notified when and where to pick up items' : 'Shipping is calculated by the number of shirts'}</small></label>)}</div></fieldset>
           </section>
 
@@ -124,9 +143,9 @@ export default function HallOfFamePage() {
             <div className="my-5 grid gap-2 border-y border-[#e2dfd7] py-4 text-sm"><p className="flex justify-between"><span className="text-[#667068]">Total shirts</span><strong>{totalQuantity}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Fulfillment</span><strong>{fulfillment}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Merchandise subtotal</span><strong>${subtotal}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Shipping</span><strong>{shipping === null ? 'Quote required' : shipping === 0 ? 'Free' : `$${shipping}`}</strong></p></div>
             <div className="mb-5 flex items-center justify-between gap-4"><span className="text-sm">Order total</span><strong className="text-right text-xl font-black uppercase text-[#9b6e00]">{shipping === null ? `$${subtotal} + shipping` : `$${total}`}</strong></div>
             {shipping === null && <p className="mb-4 bg-[#fff4d5] p-3 text-xs text-[#755500]">Delivery orders above 10 shirts require a shipping quote.</p>}
-            <button className="min-h-13 w-full rounded-sm bg-[#d5a92f] px-6 font-extrabold text-[#10140f] disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={cart.length===0 || shipping===null}>Review order →</button>
-            <p className="mt-3 text-center text-[11px] text-[#667068]">No payment will be collected yet.</p>
-            {submitted && <div className="mt-4 grid gap-1 border-l-4 border-[#0d3828] bg-[#edf4ef] p-4 text-xs leading-5" role="status"><strong className="text-[#0d3828]">Your selections are ready.</strong><span>Stripe Checkout can be connected after the deadline and Texas tax location are confirmed.</span></div>}
+            <button className="min-h-13 w-full rounded-sm bg-[#d5a92f] px-6 font-extrabold text-[#10140f] disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={cart.length===0 || shipping===null || checkoutStatus==="loading"}>{checkoutStatus === "loading" ? "Opening secure checkout…" : "Pay securely with Stripe →"}</button>
+            <p className="mt-3 text-center text-[11px] text-[#667068]">Payment is completed securely on Stripe.</p>
+            {checkoutStatus === "error" && <div className="mt-4 border-l-4 border-[#8b3c2b] bg-[#fff0ec] p-4 text-xs leading-5 text-[#8b3c2b]" role="alert"><strong className="block">Checkout couldn’t start.</strong><span>{checkoutError}</span></div>}
           </aside>
         </form>
       </section>
