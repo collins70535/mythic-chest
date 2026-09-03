@@ -68,7 +68,7 @@ export default function HallOfFamePage() {
     setCheckoutStatus("loading")
     setCheckoutError("")
     try {
-      const response = await fetch("/api/create-checkout-session", {
+      const response = await fetch("/api/create-hall-of-fame-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cart, customer, fulfillment }),

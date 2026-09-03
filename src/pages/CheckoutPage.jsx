@@ -1,14 +1,39 @@
+import { useState } from "react"
 import { Link } from "react-router-dom"
 import { useCart } from "../context/useCart"
 
-const inputClass =
-  "w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-blue-400"
-
 export default function CheckoutPage() {
   const { cartTotal, items } = useCart()
+  const [checkoutError, setCheckoutError] = useState("")
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
   const shippingEstimate = items.length > 0 ? 12 : 0
   const orderTotal = cartTotal + shippingEstimate
+
+  async function startCheckout() {
+    setCheckoutError("")
+    setIsRedirecting(true)
+
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map(({ id, quantity }) => ({ id, quantity })),
+        }),
+      })
+      const result = await response.json()
+
+      if (!response.ok || !result.url) {
+        throw new Error(result.error || "Checkout could not be started.")
+      }
+
+      window.location.assign(result.url)
+    } catch (error) {
+      setCheckoutError(error.message || "Checkout could not be started.")
+      setIsRedirecting(false)
+    }
+  }
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-12 md:px-8 md:py-16">
@@ -35,99 +60,23 @@ export default function CheckoutPage() {
       ) : (
         <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
           <section className="grid gap-6">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 md:p-6">
-              <h2 className="mb-5 text-2xl font-bold">Express checkout</h2>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <button
-                  type="button"
-                  className="rounded-xl border border-white/15 bg-black px-5 py-4 font-semibold text-white opacity-60"
-                  disabled
-                >
-                  Apple Pay
-                </button>
-                <button
-                  type="button"
-                  className="rounded-xl border border-white/15 bg-white px-5 py-4 font-semibold text-zinc-950 opacity-60"
-                  disabled
-                >
-                  Google Pay
-                </button>
-              </div>
-              <p className="mt-4 text-sm text-zinc-500">
-                Wallet buttons will be powered by Stripe Express Checkout after
-                Stripe keys and domain verification are added.
+            <div className="rounded-2xl border border-blue-400/30 bg-blue-500/10 p-6 md:p-8">
+              <p className="mb-3 text-sm font-bold uppercase tracking-[0.25em] text-blue-300">
+                Powered by Stripe
               </p>
+              <h2 className="mb-4 text-3xl font-black">Secure hosted checkout</h2>
+              <p className="max-w-2xl leading-7 text-zinc-300">
+                Continue to Stripe to enter your email, shipping address, and
+                payment details. Mythic Chest never stores your card number.
+                Available payment methods, including eligible wallets, are shown
+                securely by Stripe.
+              </p>
+              <div className="mt-6 grid gap-3 text-sm text-zinc-400 sm:grid-cols-3">
+                <p className="rounded-xl border border-white/10 bg-black/20 p-4">Encrypted payment</p>
+                <p className="rounded-xl border border-white/10 bg-black/20 p-4">US shipping collected</p>
+                <p className="rounded-xl border border-white/10 bg-black/20 p-4">Stripe payment confirmation</p>
+              </div>
             </div>
-
-            <form className="grid gap-6">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 md:p-6">
-                <h2 className="mb-5 text-2xl font-bold">Contact</h2>
-                <label className="grid gap-2 text-sm text-zinc-400">
-                  Email
-                  <input
-                    className={inputClass}
-                    type="email"
-                    autoComplete="email"
-                    placeholder="builder@example.com"
-                  />
-                </label>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 md:p-6">
-                <h2 className="mb-5 text-2xl font-bold">Shipping</h2>
-                <div className="grid gap-4">
-                  <label className="grid gap-2 text-sm text-zinc-400">
-                    Full name
-                    <input
-                      className={inputClass}
-                      autoComplete="name"
-                      placeholder="Amuro Ray"
-                    />
-                  </label>
-                  <label className="grid gap-2 text-sm text-zinc-400">
-                    Address
-                    <input
-                      className={inputClass}
-                      autoComplete="street-address"
-                      placeholder="123 Colony Way"
-                    />
-                  </label>
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    <label className="grid gap-2 text-sm text-zinc-400 sm:col-span-1">
-                      City
-                      <input
-                        className={inputClass}
-                        autoComplete="address-level2"
-                        placeholder="Houston"
-                      />
-                    </label>
-                    <label className="grid gap-2 text-sm text-zinc-400">
-                      State
-                      <input
-                        className={inputClass}
-                        autoComplete="address-level1"
-                        placeholder="TX"
-                      />
-                    </label>
-                    <label className="grid gap-2 text-sm text-zinc-400">
-                      ZIP
-                      <input
-                        className={inputClass}
-                        autoComplete="postal-code"
-                        placeholder="77002"
-                      />
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 md:p-6">
-                <h2 className="mb-5 text-2xl font-bold">Payment</h2>
-                <div className="rounded-xl border border-dashed border-white/15 px-5 py-8 text-center text-zinc-500">
-                  Stripe Payment Element will mount here.
-                </div>
-              </div>
-            </form>
           </section>
 
           <aside className="h-fit rounded-2xl border border-white/10 bg-zinc-950 p-5 md:p-6">
@@ -163,18 +112,28 @@ export default function CheckoutPage() {
                 <span>${shippingEstimate.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-lg font-bold">
-                <span>Total</span>
+                <span>Estimated total</span>
                 <span className="text-blue-400">${orderTotal.toFixed(2)}</span>
               </div>
+              <p className="text-xs leading-5 text-zinc-500">
+                Applicable taxes are calculated during secure checkout.
+              </p>
             </div>
 
             <button
               type="button"
-              className="mt-6 w-full rounded-xl bg-blue-500 py-4 font-semibold opacity-60"
-              disabled
+              className="mt-6 w-full rounded-xl bg-blue-500 py-4 font-semibold transition hover:bg-blue-400 disabled:cursor-wait disabled:opacity-60"
+              disabled={isRedirecting}
+              onClick={startCheckout}
             >
-              Pay with Stripe
+              {isRedirecting ? "Opening secure checkout…" : "Continue to Stripe"}
             </button>
+
+            {checkoutError && (
+              <p role="alert" className="mt-4 rounded-lg border border-red-400/30 bg-red-500/10 p-3 text-sm text-red-200">
+                {checkoutError}
+              </p>
+            )}
           </aside>
         </div>
       )}

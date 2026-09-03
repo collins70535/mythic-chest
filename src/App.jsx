@@ -6,6 +6,7 @@ import { CartProvider } from "./context/CartContext"
 
 import AboutPage from "./pages/AboutPage"
 import CheckoutPage from "./pages/CheckoutPage"
+import CheckoutSuccessPage from "./pages/CheckoutSuccessPage"
 import CollectionPage from "./pages/CollectionPage"
 import HomePage from "./pages/HomePage"
 import ProductPage from "./pages/ProductPage"
@@ -27,6 +28,7 @@ function AppContent() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="/collections/:categoryId" element={<CollectionPage />} />
           <Route path="/product/:slug" element={<ProductPage />} />
         </Routes>

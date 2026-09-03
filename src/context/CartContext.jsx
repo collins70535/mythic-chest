@@ -63,6 +63,11 @@ export function CartProvider({ children }) {
     )
   }, [])
 
+  const clearCart = useCallback(() => {
+    setItems([])
+    setIsCartOpen(false)
+  }, [])
+
   const cartCount = items.reduce((total, item) => total + item.quantity, 0)
   const cartTotal = items.reduce(
     (total, item) => total + getPriceValue(item.price) * item.quantity,
@@ -74,6 +79,7 @@ export function CartProvider({ children }) {
       addItem,
       cartCount,
       cartTotal,
+      clearCart,
       closeCart: () => setIsCartOpen(false),
       isCartOpen,
       items,
@@ -81,7 +87,7 @@ export function CartProvider({ children }) {
       removeItem,
       updateQuantity,
     }),
-    [addItem, cartCount, cartTotal, isCartOpen, items, removeItem, updateQuantity],
+    [addItem, cartCount, cartTotal, clearCart, isCartOpen, items, removeItem, updateQuantity],
   )
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
