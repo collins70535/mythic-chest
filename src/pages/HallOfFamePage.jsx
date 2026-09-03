@@ -86,7 +86,7 @@ export default function HallOfFamePage() {
         <div className="relative min-w-0 max-md:order-first">
           <p className="relative z-10 mx-auto mb-6 max-w-xl border-l-4 border-[#d5a92f] bg-[#071d16]/85 px-5 py-4 text-sm leading-6 text-[#e9efe9] shadow-2xl">From earning <strong className="text-[#f0c752]">All-State - All District honors</strong>, to throwing for nearly <strong className="text-[#f0c752]">4,800 career yards</strong> and 42 passing TDs, Malcolm Mitchell left a lasting mark on Bobcat football.</p>
           <div className="absolute inset-[8%] rotate-[-12deg] rounded-[50%] border border-[#d5a92f]/40" aria-hidden="true" />
-          <div className="hof-watermarked hof-hero-watermark relative z-10 mx-auto w-full max-w-[500px] border-8 border-[#f4efe3] shadow-2xl outline-2 outline-[#d5a92f]">
+          <div className="relative z-10 mx-auto w-full max-w-[500px] border-8 border-[#f4efe3] shadow-2xl outline-2 outline-[#d5a92f]">
             <img className="aspect-[4/5] w-full object-cover" src={mitchellPhoto} alt="Historic photograph of Mitchell wearing number 7 on the football field" />
           </div>
         </div>
