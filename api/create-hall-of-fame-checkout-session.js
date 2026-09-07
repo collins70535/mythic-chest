@@ -1,3 +1,5 @@
+const COMING_SOON = true
+
 const PRICES = { S: 1000, M: 2000, L: 2000, XL: 2000, "2XL": 2500, "3XL": 2500 }
 const COLORS = new Set(["Black", "Green", "White"])
 
@@ -14,6 +16,12 @@ function getBody(request) {
 }
 
 export default async function handler(request, response) {
+  if (COMING_SOON) {
+    return response.status(503).json({
+      error: "Coming Soon - browsing only. Orders and checkout are not live yet.",
+    })
+  }
+
   if (request.method !== "POST") return response.status(405).json({ error: "Method not allowed." })
   if (!process.env.STRIPE_SECRET_KEY) return response.status(503).json({ error: "Stripe is not configured yet." })
 
