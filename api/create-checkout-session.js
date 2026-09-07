@@ -1,3 +1,5 @@
+const COMING_SOON = true
+
 const CATALOG = new Map([
   [1, { name: "RX-78 Gundam", description: "Master Grade model kit", unitAmount: 8999 }],
   [2, { name: "Wing Zero Custom", description: "Master Grade Ver. Ka model kit", unitAmount: 11999 }],
@@ -83,6 +85,12 @@ function buildStripeParams(items, siteUrl) {
 }
 
 export default async function handler(request, response) {
+  if (COMING_SOON) {
+    return sendJson(response, 503, {
+      error: "Coming Soon - browsing only. Orders and checkout are not live yet.",
+    })
+  }
+
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST")
     return sendJson(response, 405, { error: "Method not allowed." })

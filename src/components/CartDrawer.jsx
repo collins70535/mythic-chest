@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { useCart } from "../context/useCart"
+import { COMING_SOON } from "../config/comingSoon"
 
 export default function CartDrawer() {
   const {
@@ -129,13 +130,28 @@ export default function CartDrawer() {
                 <span>Total</span>
                 <span className="text-blue-400">${cartTotal.toFixed(2)}</span>
               </div>
-              <Link
-                to="/checkout"
-                className="flex w-full items-center justify-center rounded-xl bg-blue-500 px-4 py-4 text-center font-semibold hover:bg-blue-400"
-                onClick={closeCart}
-              >
-                Checkout
-              </Link>
+              {COMING_SOON ? (
+                <div className="grid gap-3">
+                  <p className="rounded-xl border border-blue-400/30 bg-blue-500/10 px-4 py-3 text-center text-sm text-blue-100">
+                    Coming soon — browsing only. Checkout is not live yet.
+                  </p>
+                  <button
+                    type="button"
+                    className="flex w-full cursor-not-allowed items-center justify-center rounded-xl bg-zinc-700 px-4 py-4 text-center font-semibold text-zinc-300"
+                    disabled
+                  >
+                    Checkout unavailable
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  to="/checkout"
+                  className="flex w-full items-center justify-center rounded-xl bg-blue-500 px-4 py-4 text-center font-semibold hover:bg-blue-400"
+                  onClick={closeCart}
+                >
+                  Checkout
+                </Link>
+              )}
             </div>
           </>
         )}

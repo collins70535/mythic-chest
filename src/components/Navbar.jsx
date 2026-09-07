@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import logo from "../assets/mc-logo.png"
 import { useCart } from "../context/useCart"
+import { COMING_SOON, COMING_SOON_BANNER } from "../config/comingSoon"
 
 const navLinks = [
   { label: "Shop", href: "/#shop" },
@@ -16,7 +17,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur">
       <div className="bg-blue-500 px-4 py-2 text-center text-xs font-bold uppercase tracking-[0.25em] text-white md:text-sm">
-        Secure online checkout powered by Stripe
+        {COMING_SOON ? COMING_SOON_BANNER : "Secure online checkout powered by Stripe"}
       </div>
 
       <nav className="px-5 py-5 md:px-8">

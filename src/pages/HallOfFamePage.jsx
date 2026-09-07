@@ -3,6 +3,7 @@ import "./HallOfFamePage.css"
 import blackShirts from "../assets/hall-of-fame/black-shirts.png"
 import greenWhiteShirts from "../assets/hall-of-fame/green-white-shirts.png"
 import mitchellPhoto from "../assets/hall-of-fame/mitchell-number-7.jpg"
+import { COMING_SOON, COMING_SOON_BANNER } from "../config/comingSoon"
 
 const colors = [
   { name: "Black", swatch: "#0a0a0a", image: blackShirts },
@@ -63,6 +64,12 @@ export default function HallOfFamePage() {
   }
 
   async function startCheckout(event) {
+    if (COMING_SOON) {
+      setCheckoutStatus("error")
+      setCheckoutError(COMING_SOON_BANNER)
+      return
+    }
+
     event.preventDefault()
     if (cart.length === 0 || shipping === null) return
     setCheckoutStatus("loading")
@@ -146,7 +153,7 @@ export default function HallOfFamePage() {
             <div className="my-5 grid gap-2 border-y border-[#e2dfd7] py-4 text-sm"><p className="flex justify-between"><span className="text-[#667068]">Total shirts</span><strong>{totalQuantity}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Fulfillment</span><strong>{fulfillment}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Merchandise subtotal</span><strong>${subtotal}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Shipping</span><strong>{shipping === null ? 'Quote required' : shipping === 0 ? 'Free' : `$${shipping}`}</strong></p></div>
             <div className="mb-5 flex items-center justify-between gap-4"><span className="text-sm">Order total</span><strong className="text-right text-xl font-black uppercase text-[#9b6e00]">{shipping === null ? `$${subtotal} + shipping` : `$${total}`}</strong></div>
             {shipping === null && <p className="mb-4 bg-[#fff4d5] p-3 text-xs text-[#755500]">Delivery orders above 10 shirts require a shipping quote.</p>}
-            <button className="min-h-13 w-full rounded-sm bg-[#d5a92f] px-6 font-extrabold text-[#10140f] disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={cart.length===0 || shipping===null || checkoutStatus==="loading"}>{checkoutStatus === "loading" ? "Opening secure checkout…" : "Pay securely with Stripe →"}</button>
+            <button className="min-h-13 w-full rounded-sm bg-[#d5a92f] px-6 font-extrabold text-[#10140f] disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={COMING_SOON || cart.length===0 || shipping===null || checkoutStatus==="loading"}>{COMING_SOON ? "Coming soon — checkout unavailable" : checkoutStatus === "loading" ? "Opening secure checkout…" : "Pay securely with Stripe →"}</button>
             <p className="mt-3 text-center text-[11px] text-[#667068]">Payment is completed securely on Stripe.</p>
             {checkoutStatus === "error" && <div className="mt-4 border-l-4 border-[#8b3c2b] bg-[#fff0ec] p-4 text-xs leading-5 text-[#8b3c2b]" role="alert"><strong className="block">Checkout couldn’t start.</strong><span>{checkoutError}</span></div>}
           </aside>
