@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import { useCart } from "../context/useCart"
+import { COMING_SOON, COMING_SOON_BANNER } from "../config/comingSoon"
 
 export default function CheckoutPage() {
   const { cartTotal, items } = useCart()
@@ -11,6 +12,11 @@ export default function CheckoutPage() {
   const orderTotal = cartTotal + shippingEstimate
 
   async function startCheckout() {
+    if (COMING_SOON) {
+      setCheckoutError(COMING_SOON_BANNER)
+      return
+    }
+
     setCheckoutError("")
     setIsRedirecting(true)
 
@@ -39,9 +45,11 @@ export default function CheckoutPage() {
     <main className="mx-auto max-w-6xl px-5 py-12 md:px-8 md:py-16">
       <div className="mb-10">
         <p className="mb-3 text-sm uppercase tracking-[0.3em] text-blue-400">
-          Secure Checkout
+          {COMING_SOON ? "Coming Soon" : "Secure Checkout"}
         </p>
-        <h1 className="text-4xl font-black md:text-5xl">Complete your order</h1>
+        <h1 className="text-4xl font-black md:text-5xl">
+          {COMING_SOON ? "Orders are not live yet" : "Complete your order"}
+        </h1>
       </div>
 
       {items.length === 0 ? (
@@ -120,14 +128,29 @@ export default function CheckoutPage() {
               </p>
             </div>
 
-            <button
-              type="button"
-              className="mt-6 w-full rounded-xl bg-blue-500 py-4 font-semibold transition hover:bg-blue-400 disabled:cursor-wait disabled:opacity-60"
-              disabled={isRedirecting}
-              onClick={startCheckout}
-            >
-              {isRedirecting ? "Opening secure checkout…" : "Continue to Stripe"}
-            </button>
+            {COMING_SOON ? (
+              <div className="mt-6 grid gap-3">
+                <p className="rounded-xl border border-blue-400/30 bg-blue-500/10 px-4 py-3 text-sm text-blue-100">
+                  {COMING_SOON_BANNER}
+                </p>
+                <button
+                  type="button"
+                  className="w-full cursor-not-allowed rounded-xl bg-zinc-700 py-4 font-semibold text-zinc-300"
+                  disabled
+                >
+                  Checkout unavailable
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="mt-6 w-full rounded-xl bg-blue-500 py-4 font-semibold transition hover:bg-blue-400 disabled:cursor-wait disabled:opacity-60"
+                disabled={isRedirecting}
+                onClick={startCheckout}
+              >
+                {isRedirecting ? "Opening secure checkout…" : "Continue to Stripe"}
+              </button>
+            )}
 
             {checkoutError && (
               <p role="alert" className="mt-4 rounded-lg border border-red-400/30 bg-red-500/10 p-3 text-sm text-red-200">
