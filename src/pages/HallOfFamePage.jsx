@@ -10,11 +10,12 @@ const colors = [
   { name: "Green", swatch: "#123d2a", image: greenWhiteShirts },
   { name: "White", swatch: "#f8f7f2", image: greenWhiteShirts },
 ]
-const sizes = ["S", "M", "L", "XL", "2XL", "3XL"]
-const prices = { S: 10, M: 20, L: 20, XL: 20, "2XL": 25, "3XL": 25 }
+const sizes = ["S", "M", "L", "XL", "2XL", "3XL", "Youth", "Toddler"]
+const prices = { S: 20, M: 20, L: 20, XL: 20, "2XL": 25, "3XL": 25, Youth: 12, Toddler: 12 }
+const sizesRequiringDetail = new Set(["Youth", "Toddler"])
 
 export default function HallOfFamePage() {
-  const [shirt, setShirt] = useState({ id: 1, color: "Green", size: "L", quantity: 1 })
+  const [shirt, setShirt] = useState({ id: 1, color: "Green", size: "L", quantity: 1, sizeDetail: "" })
   const [cart, setCart] = useState([])
   const [nextId, setNextId] = useState(1)
   const [fulfillment, setFulfillment] = useState("Local Pickup")
@@ -50,17 +51,30 @@ export default function HallOfFamePage() {
   const total = subtotal + (shipping ?? 0)
 
   function updateShirt(changes) {
-    setShirt((current) => ({ ...current, ...changes }))
+    setShirt((current) => {
+      const next = { ...current, ...changes }
+      if (changes.size && !sizesRequiringDetail.has(changes.size)) next.sizeDetail = ""
+      return next
+    })
     setAdded(false)
     setCheckoutError("")
+    setCheckoutStatus((status) => (status === "error" ? "idle" : status))
   }
 
   function addToCart() {
-    setCart((current) => [...current, { ...shirt, id: nextId }])
+    const needsDetail = sizesRequiringDetail.has(shirt.size)
+    const sizeDetail = needsDetail ? shirt.sizeDetail.trim().slice(0, 40) : ""
+    if (needsDetail && !sizeDetail) {
+      setCheckoutStatus("error")
+      setCheckoutError("Enter the specific Youth or Toddler size (e.g. 1T-2T, Onesie).")
+      return
+    }
+    setCart((current) => [...current, { ...shirt, sizeDetail, id: nextId }])
     setNextId((id) => id + 1)
-    setShirt((current) => ({ ...current, color: "Green", size: "L", quantity: 1 }))
+    setShirt((current) => ({ ...current, color: "Green", size: "L", quantity: 1, sizeDetail: "" }))
     setAdded(true)
     setCheckoutError("")
+    setCheckoutStatus("idle")
   }
 
   async function startCheckout(event) {
@@ -137,7 +151,24 @@ export default function HallOfFamePage() {
                 <div className="mb-6 grid grid-cols-3 gap-2">{colors.map((option) => <button key={option.name} type="button" onClick={() => updateShirt({ color: option.name })} className={`flex min-h-12 items-center justify-center gap-2 border font-bold ${shirt.color === option.name ? 'border-2 border-[#0d3828] bg-[#edf4ef] text-[#0d3828]' : 'border-[#d6d5cf] bg-white'}`} aria-pressed={shirt.color === option.name}><span className="size-4 rounded-full border border-black/30" style={{background:option.swatch}} />{option.name}</button>)}</div>
                 <div className="mb-7 bg-[#09261c] p-3"><p className="mb-2 text-[11px] uppercase tracking-widest text-[#d8e4dc]"><strong className="text-[#f0c752]">{shirt.color}</strong> • Front &amp; back</p><div className="hof-watermarked hof-shirt-watermark relative aspect-[1370/560] overflow-hidden bg-[#050706]"><img className={`absolute left-0 top-0 h-auto w-full max-w-none ${shirt.color === 'White' ? '-translate-y-1/2' : ''}`} src={selectedColor.image} alt={`${shirt.color} Hall of Fame shirt shown from the front and back`} /></div></div>
                 <p className="mb-2 text-[10px] font-extrabold uppercase tracking-widest text-[#555e57]">Size</p>
-                <div className="grid grid-cols-3 gap-2 md:grid-cols-6">{sizes.map((size) => <button key={size} type="button" onClick={() => updateShirt({ size })} className={`grid min-h-14 place-items-center border p-1 font-bold ${shirt.size === size ? 'border-2 border-[#0d3828] bg-[#edf4ef] text-[#0d3828]' : 'border-[#d6d5cf] bg-white'}`} aria-pressed={shirt.size === size}><span>{size}</span><small className="text-[10px] text-[#667068]">${prices[size]}</small></button>)}</div>
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8">{sizes.map((size) => <button key={size} type="button" onClick={() => updateShirt({ size })} className={`grid min-h-14 place-items-center border p-1 font-bold ${shirt.size === size ? 'border-2 border-[#0d3828] bg-[#edf4ef] text-[#0d3828]' : 'border-[#d6d5cf] bg-white'}`} aria-pressed={shirt.size === size}><span>{size}</span><small className="text-[10px] text-[#667068]">${prices[size]}</small></button>)}</div>
+                {sizesRequiringDetail.has(shirt.size) && (
+                  <label className="mt-4 block text-[10px] font-extrabold uppercase tracking-widest text-[#555e57]">
+                    Specific size detail
+                    <input
+                      className="mt-2 block min-h-12 w-full border border-[#d3d1ca] px-3 text-base normal-case tracking-normal"
+                      name="sizeDetail"
+                      type="text"
+                      maxLength={40}
+                      required
+                      placeholder="e.g. 1T-2T, Onesie, YS"
+                      value={shirt.sizeDetail}
+                      onChange={(event) => updateShirt({ sizeDetail: event.target.value.slice(0, 40) })}
+                      aria-describedby="hof-size-detail-hint"
+                    />
+                    <span id="hof-size-detail-hint" className="mt-2 block text-[11px] font-normal normal-case tracking-normal text-[#667068]">Required for Youth and Toddler (max 40 characters).</span>
+                  </label>
+                )}
                 <div className="mt-6 flex items-center justify-between font-bold"><span>Quantity</span><div className="flex items-center border border-[#d6d5cf]"><button className="size-11 bg-[#f4f2ec] text-xl" type="button" onClick={() => updateShirt({quantity:Math.max(1,shirt.quantity-1)})} aria-label="Decrease quantity">−</button><output className="w-11 text-center">{shirt.quantity}</output><button className="size-11 bg-[#f4f2ec] text-xl" type="button" onClick={() => updateShirt({quantity:Math.min(12,shirt.quantity+1)})} aria-label="Increase quantity">+</button></div></div>
               </div>
               <button className="mt-3 min-h-14 w-full rounded-sm bg-[#0d3828] font-extrabold text-white shadow-lg hover:bg-[#155039]" type="button" onClick={addToCart}>Add shirt to cart</button>
@@ -149,7 +180,7 @@ export default function HallOfFamePage() {
 
           <aside id="hof-order-summary" className="h-fit border border-[#dcd8ce] bg-white p-6 shadow-xl lg:sticky lg:top-5">
             <p className="mb-2 text-[11px] font-extrabold uppercase tracking-widest text-[#0d3828]">Your cart</p><h3 className="mb-5 text-2xl font-black uppercase">Hall of Fame 2026 Tees</h3>
-            <div className="grid gap-3">{cart.length === 0 && <p className="bg-[#f4f2ec] p-4 text-xs leading-5 text-[#667068]">Your cart is empty. Choose your shirt, then add it to the cart.</p>}{cart.map((item,index) => <div className="grid grid-cols-[1fr_auto] gap-1 border-l-4 border-[#d5a92f] bg-[#f4f2ec] p-3 text-xs" key={item.id}><span className="text-[#667068]">Shirt {index+1}</span><strong className="text-[#0d3828]">{item.color} • {item.size}</strong><small>Quantity {item.quantity} × ${prices[item.size]} = ${prices[item.size]*item.quantity}</small><button className="text-right font-extrabold text-[#8b3c2b] underline" type="button" onClick={() => setCart((current) => current.filter((entry) => entry.id !== item.id))}>Remove</button></div>)}</div>
+            <div className="grid gap-3">{cart.length === 0 && <p className="bg-[#f4f2ec] p-4 text-xs leading-5 text-[#667068]">Your cart is empty. Choose your shirt, then add it to the cart.</p>}{cart.map((item,index) => <div className="grid grid-cols-[1fr_auto] gap-1 border-l-4 border-[#d5a92f] bg-[#f4f2ec] p-3 text-xs" key={item.id}><span className="text-[#667068]">Shirt {index+1}</span><strong className="text-[#0d3828]">{item.color} • {item.size}{item.sizeDetail ? ` (${item.sizeDetail})` : ""}</strong><small>Quantity {item.quantity} × ${prices[item.size]} = ${prices[item.size]*item.quantity}</small><button className="text-right font-extrabold text-[#8b3c2b] underline" type="button" onClick={() => setCart((current) => current.filter((entry) => entry.id !== item.id))}>Remove</button></div>)}</div>
             <div className="my-5 grid gap-2 border-y border-[#e2dfd7] py-4 text-sm"><p className="flex justify-between"><span className="text-[#667068]">Total shirts</span><strong>{totalQuantity}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Fulfillment</span><strong>{fulfillment}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Merchandise subtotal</span><strong>${subtotal}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Shipping</span><strong>{shipping === null ? 'Quote required' : shipping === 0 ? 'Free' : `$${shipping}`}</strong></p></div>
             <div className="mb-5 flex items-center justify-between gap-4"><span className="text-sm">Order total</span><strong className="text-right text-xl font-black uppercase text-[#9b6e00]">{shipping === null ? `$${subtotal} + shipping` : `$${total}`}</strong></div>
             {shipping === null && <p className="mb-4 bg-[#fff4d5] p-3 text-xs text-[#755500]">Delivery orders above 10 shirts require a shipping quote.</p>}

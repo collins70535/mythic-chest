@@ -1,5 +1,7 @@
-const PRICES = { S: 1000, M: 2000, L: 2000, XL: 2000, "2XL": 2500, "3XL": 2500 }
+const PRICES = { S: 2000, M: 2000, L: 2000, XL: 2000, "2XL": 2500, "3XL": 2500, Youth: 1200, Toddler: 1200 }
 const COLORS = new Set(["Black", "Green", "White"])
+const SIZES_REQUIRING_DETAIL = new Set(["Youth", "Toddler"])
+const SIZE_DETAIL_MAX = 40
 
 function shippingAmount(quantity) {
   if (quantity === 1) return 700
@@ -11,6 +13,14 @@ function shippingAmount(quantity) {
 
 function getBody(request) {
   return typeof request.body === "string" ? JSON.parse(request.body) : (request.body ?? {})
+}
+
+function sanitizeSizeDetail(value) {
+  if (typeof value !== "string") return ""
+  return value
+    .replace(/[\u0000-\u001f\u007f]/g, "")
+    .trim()
+    .slice(0, SIZE_DETAIL_MAX)
 }
 
 export default async function handler(request, response) {
@@ -27,8 +37,13 @@ export default async function handler(request, response) {
     const normalized = cart.map((item) => {
       const quantity = Number(item.quantity)
       if (!COLORS.has(item.color) || !PRICES[item.size] || !Number.isInteger(quantity) || quantity < 1 || quantity > 12) throw new Error("One or more shirt selections are invalid.")
+
+      const needsDetail = SIZES_REQUIRING_DETAIL.has(item.size)
+      const sizeDetail = needsDetail ? sanitizeSizeDetail(item.sizeDetail) : ""
+      if (needsDetail && !sizeDetail) throw new Error("Youth and Toddler sizes require a specific size detail (e.g. 1T-2T, Onesie).")
+
       totalQuantity += quantity
-      return { color: item.color, size: item.size, quantity, unitAmount: PRICES[item.size] }
+      return { color: item.color, size: item.size, quantity, unitAmount: PRICES[item.size], sizeDetail }
     })
     if (totalQuantity > 10 && fulfillment === "Delivery") return response.status(400).json({ error: "Delivery orders above 10 shirts require a shipping quote." })
 
@@ -45,11 +60,21 @@ export default async function handler(request, response) {
     params.set("metadata[fulfillment]", fulfillment)
 
     normalized.forEach((item, index) => {
+      const productName = item.sizeDetail
+        ? `Hall of Fame 2026 Tee — ${item.size}, detail: ${item.sizeDetail}`
+        : `Hall of Fame 2026 Tee — ${item.color}, ${item.size}`
+      const productDescription = item.sizeDetail
+        ? `${item.color} • Eunice Bobcats • Mitchell #7`
+        : "Eunice Bobcats • Mitchell #7"
+
       params.set(`line_items[${index}][price_data][currency]`, "usd")
       params.set(`line_items[${index}][price_data][unit_amount]`, String(item.unitAmount))
-      params.set(`line_items[${index}][price_data][product_data][name]`, `Hall of Fame 2026 Tee — ${item.color}, ${item.size}`)
-      params.set(`line_items[${index}][price_data][product_data][description]`, "Eunice Bobcats • Mitchell #7")
+      params.set(`line_items[${index}][price_data][product_data][name]`, productName)
+      params.set(`line_items[${index}][price_data][product_data][description]`, productDescription)
       params.set(`line_items[${index}][quantity]`, String(item.quantity))
+      params.set(`metadata[item_${index}_color]`, item.color)
+      params.set(`metadata[item_${index}_size]`, item.size)
+      if (item.sizeDetail) params.set(`metadata[item_${index}_size_detail]`, item.sizeDetail)
     })
 
     if (fulfillment === "Delivery") {
