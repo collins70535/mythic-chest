@@ -11,9 +11,14 @@ import CollectionPage from "./pages/CollectionPage"
 import HomePage from "./pages/HomePage"
 import ProductPage from "./pages/ProductPage"
 import HallOfFamePage from "./pages/HallOfFamePage"
+import HallOfFamePayPage from "./pages/HallOfFamePayPage"
 
 function AppContent() {
   const location = useLocation()
+
+  if (location.pathname === "/hall-of-fame-2026/pay") {
+    return <HallOfFamePayPage />
+  }
 
   if (location.pathname === "/hall-of-fame-2026") {
     return <HallOfFamePage />
