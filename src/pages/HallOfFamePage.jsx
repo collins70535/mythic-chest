@@ -4,6 +4,7 @@ import blackShirts from "../assets/hall-of-fame/black-shirts.png"
 import greenWhiteShirts from "../assets/hall-of-fame/green-white-shirts.png"
 import mitchellPhoto from "../assets/hall-of-fame/mitchell-number-7.jpg"
 import { HALL_OF_FAME_CHECKOUT_ENABLED } from "../config/comingSoon"
+import { HOF_CHECKOUT_PAYLOAD_KEY, HOF_EMBEDDED_CHECKOUT_ENABLED } from "../config/hofCheckout"
 
 const colors = [
   { name: "Black", swatch: "#0a0a0a", image: blackShirts },
@@ -89,6 +90,17 @@ export default function HallOfFamePage() {
     setCheckoutStatus("loading")
     setCheckoutError("")
     try {
+      // TEST spike: when embedded flag is on, hand payload to Mythic shell pay route.
+      // Hosted redirect remains the default when the flag is off.
+      if (HOF_EMBEDDED_CHECKOUT_ENABLED) {
+        sessionStorage.setItem(
+          HOF_CHECKOUT_PAYLOAD_KEY,
+          JSON.stringify({ cart, customer, fulfillment }),
+        )
+        window.location.assign("/hall-of-fame-2026/pay")
+        return
+      }
+
       const response = await fetch("/api/create-hall-of-fame-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -1,5 +1,15 @@
 # React + Vite
 
+## Hall of Fame Embedded Checkout (TEST spike)
+
+Feature flags default **off**. Hosted Stripe Checkout remains the live path.
+
+- Server: `HOF_EMBEDDED_CHECKOUT=true` → Session `ui_mode=embedded_page`, response `{ clientSecret }`
+- Client: `VITE_HOF_EMBEDDED_CHECKOUT=true` + `VITE_STRIPE_PUBLISHABLE_KEY=pk_...` → `/hall-of-fame-2026/pay`
+- OMS still depends on Checkout Session webhooks (`checkout.session.completed` / `async_payment_succeeded`) and `item_N_*` metadata.
+
+Do not turn these flags on in production LIVE without explicit authorization.
+
 ## Stripe Checkout
 
 The storefront creates hosted Stripe Checkout Sessions through the Vercel

@@ -23,6 +23,11 @@ function sanitizeSizeDetail(value) {
     .slice(0, SIZE_DETAIL_MAX)
 }
 
+function isEmbeddedCheckoutEnabled() {
+  const value = process.env.HOF_EMBEDDED_CHECKOUT
+  return value === "true" || value === "1"
+}
+
 export default async function handler(request, response) {
   if (request.method !== "POST") return response.status(405).json({ error: "Method not allowed." })
   if (!process.env.STRIPE_SECRET_KEY) return response.status(503).json({ error: "Stripe is not configured yet." })
@@ -48,16 +53,27 @@ export default async function handler(request, response) {
     if (totalQuantity > 10 && fulfillment === "Delivery") return response.status(400).json({ error: "Delivery orders above 10 shirts require a shipping quote." })
 
     const origin = "https://mythic-chest.com"
+    const embedded = isEmbeddedCheckoutEnabled()
     const params = new URLSearchParams()
     params.set("mode", "payment")
-    params.set("success_url", `${origin}/hall-of-fame-2026?payment=success&session_id={CHECKOUT_SESSION_ID}`)
-    params.set("cancel_url", `${origin}/hall-of-fame-2026?payment=cancelled#hof-order-summary`)
+
+    // Embedded Checkout (TEST spike): ui_mode=embedded_page + return_url.
+    // Hosted (LIVE default): success_url + cancel_url — unchanged when flag off.
+    if (embedded) {
+      params.set("ui_mode", "embedded_page")
+      params.set("return_url", `${origin}/hall-of-fame-2026?payment=success&session_id={CHECKOUT_SESSION_ID}`)
+    } else {
+      params.set("success_url", `${origin}/hall-of-fame-2026?payment=success&session_id={CHECKOUT_SESSION_ID}`)
+      params.set("cancel_url", `${origin}/hall-of-fame-2026?payment=cancelled#hof-order-summary`)
+    }
+
     params.set("customer_email", customer.email.trim())
     params.set("phone_number_collection[enabled]", "true")
     params.set("billing_address_collection", "required")
     params.set("metadata[customer_name]", customer.name.trim().slice(0, 200))
     params.set("metadata[customer_phone]", customer.phone.trim().slice(0, 200))
     params.set("metadata[fulfillment]", fulfillment)
+    params.set("metadata[checkout_ui]", embedded ? "embedded_page" : "hosted")
 
     normalized.forEach((item, index) => {
       const productName = item.sizeDetail
@@ -94,7 +110,18 @@ export default async function handler(request, response) {
       body: params,
     })
     const session = await stripeResponse.json()
-    if (!stripeResponse.ok || !session.url) throw new Error(session.error?.message || "Stripe could not create the checkout session.")
+
+    if (!stripeResponse.ok) {
+      throw new Error(session.error?.message || "Stripe could not create the checkout session.")
+    }
+
+    if (embedded) {
+      if (!session.client_secret) throw new Error("Stripe did not return a client secret for embedded checkout.")
+      // Never log client_secret.
+      return response.status(200).json({ clientSecret: session.client_secret })
+    }
+
+    if (!session.url) throw new Error(session.error?.message || "Stripe could not create the checkout session.")
     return response.status(200).json({ url: session.url })
   } catch (error) {
     return response.status(400).json({ error: error.message || "Unable to start checkout." })
