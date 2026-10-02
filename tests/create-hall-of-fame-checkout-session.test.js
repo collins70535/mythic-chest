@@ -2,6 +2,9 @@ import assert from "node:assert/strict"
 import test from "node:test"
 
 import handler from "../api/create-hall-of-fame-checkout-session.js"
+import { HALL_OF_FAME_CHECKOUT_ENABLED } from "../src/config/comingSoon.js"
+
+const skipWhileClosed = HALL_OF_FAME_CHECKOUT_ENABLED ? false : "Hall of Fame ordering is closed"
 
 function createResponse() {
   return {
@@ -47,7 +50,38 @@ test("rejects unsupported methods", async () => {
   assert.equal(response.statusCode, 405)
 })
 
-test("rejects Youth without sizeDetail before contacting Stripe", async () => {
+test("refuses checkout and does not call Stripe while ordering is closed", { skip: HALL_OF_FAME_CHECKOUT_ENABLED ? "Hall of Fame ordering is open" : false }, async () => {
+  await withEnv({ STRIPE_SECRET_KEY: "sk_test_placeholder", HOF_EMBEDDED_CHECKOUT: "true" }, async () => {
+    const originalFetch = globalThis.fetch
+    let called = false
+    globalThis.fetch = async () => {
+      called = true
+      throw new Error("Stripe should not be called")
+    }
+    const response = createResponse()
+
+    await handler(
+      {
+        method: "POST",
+        body: {
+          cart: [{ color: "Green", size: "L", quantity: 1 }],
+          customer,
+          fulfillment: "Local Pickup",
+        },
+      },
+      response,
+    )
+
+    globalThis.fetch = originalFetch
+    assert.equal(response.statusCode, 410)
+    assert.match(response.body.error, /ordering is closed/i)
+    assert.equal(response.body.url, undefined)
+    assert.equal(response.body.clientSecret, undefined)
+    assert.equal(called, false)
+  })
+})
+
+test("rejects Youth without sizeDetail before contacting Stripe", { skip: skipWhileClosed }, async () => {
   await withEnv({ STRIPE_SECRET_KEY: "sk_test_placeholder", HOF_EMBEDDED_CHECKOUT: undefined }, async () => {
     const originalFetch = globalThis.fetch
     let called = false
@@ -76,7 +110,7 @@ test("rejects Youth without sizeDetail before contacting Stripe", async () => {
   })
 })
 
-test("rejects Toddler without sizeDetail before contacting Stripe", async () => {
+test("rejects Toddler without sizeDetail before contacting Stripe", { skip: skipWhileClosed }, async () => {
   await withEnv({ STRIPE_SECRET_KEY: "sk_test_placeholder", HOF_EMBEDDED_CHECKOUT: undefined }, async () => {
     const originalFetch = globalThis.fetch
     let called = false
@@ -105,7 +139,7 @@ test("rejects Toddler without sizeDetail before contacting Stripe", async () => 
   })
 })
 
-test("hosted (flag off): returns url and keeps item_N_* metadata", async () => {
+test("hosted (flag off): returns url and keeps item_N_* metadata", { skip: skipWhileClosed }, async () => {
   await withEnv({ STRIPE_SECRET_KEY: "sk_test_placeholder", HOF_EMBEDDED_CHECKOUT: "false" }, async () => {
     const originalFetch = globalThis.fetch
     let stripeRequest
@@ -161,7 +195,7 @@ test("hosted (flag off): returns url and keeps item_N_* metadata", async () => {
   })
 })
 
-test("embedded (flag on): returns client_secret, uses ui_mode=embedded_page, keeps item_N_* metadata", async () => {
+test("embedded (flag on): returns client_secret, uses ui_mode=embedded_page, keeps item_N_* metadata", { skip: skipWhileClosed }, async () => {
   await withEnv({ STRIPE_SECRET_KEY: "sk_test_placeholder", HOF_EMBEDDED_CHECKOUT: "true" }, async () => {
     const originalFetch = globalThis.fetch
     let stripeRequest
@@ -218,7 +252,7 @@ test("embedded (flag on): returns client_secret, uses ui_mode=embedded_page, kee
   })
 })
 
-test("uses $20 for Small and includes Youth sizeDetail in Stripe line name/metadata", async () => {
+test("uses $20 for Small and includes Youth sizeDetail in Stripe line name/metadata", { skip: skipWhileClosed }, async () => {
   await withEnv({ STRIPE_SECRET_KEY: "sk_test_placeholder", HOF_EMBEDDED_CHECKOUT: undefined }, async () => {
     const originalFetch = globalThis.fetch
     let stripeRequest
@@ -262,7 +296,7 @@ test("uses $20 for Small and includes Youth sizeDetail in Stripe line name/metad
   })
 })
 
-test("sanitizes and truncates sizeDetail to 40 characters", async () => {
+test("sanitizes and truncates sizeDetail to 40 characters", { skip: skipWhileClosed }, async () => {
   await withEnv({ STRIPE_SECRET_KEY: "sk_test_placeholder", HOF_EMBEDDED_CHECKOUT: undefined }, async () => {
     const originalFetch = globalThis.fetch
     let stripeRequest
