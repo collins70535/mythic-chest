@@ -1,4 +1,8 @@
+import { HALL_OF_FAME_CHECKOUT_ENABLED } from "../src/config/comingSoon.js"
+
 const PRICES = { S: 2000, M: 2000, L: 2000, XL: 2000, "2XL": 2500, "3XL": 2500, Youth: 1200, Toddler: 1200 }
+const ORDERING_CLOSED_ERROR =
+  "Hall of Fame 2026 ordering is closed. This commemorative tee is sold out and checkout is unavailable."
 const COLORS = new Set(["Black", "Green", "White"])
 const SIZES_REQUIRING_DETAIL = new Set(["Youth", "Toddler"])
 const SIZE_DETAIL_MAX = 40
@@ -30,6 +34,9 @@ function isEmbeddedCheckoutEnabled() {
 
 export default async function handler(request, response) {
   if (request.method !== "POST") return response.status(405).json({ error: "Method not allowed." })
+  if (!HALL_OF_FAME_CHECKOUT_ENABLED) {
+    return response.status(410).json({ error: ORDERING_CLOSED_ERROR })
+  }
   if (!process.env.STRIPE_SECRET_KEY) return response.status(503).json({ error: "Stripe is not configured yet." })
 
   try {

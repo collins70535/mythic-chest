@@ -80,8 +80,9 @@ export default function HallOfFamePage() {
 
   async function startCheckout(event) {
     if (!HALL_OF_FAME_CHECKOUT_ENABLED) {
+      event.preventDefault()
       setCheckoutStatus("error")
-      setCheckoutError("Checkout is not available for Hall of Fame orders right now.")
+      setCheckoutError("Hall of Fame 2026 ordering is closed. New orders are not available.")
       return
     }
 
@@ -119,14 +120,16 @@ export default function HallOfFamePage() {
   return (
     <main className="min-h-screen bg-[#f8f7f2] font-sans text-[#111512]">
       <div className="flex min-h-11 items-center justify-center bg-[#d5a92f] px-4 py-2 text-center text-sm font-black uppercase tracking-[.12em] text-[#10140f] sm:text-base" role="status">
-        Ordering ends on September 18
+        {HALL_OF_FAME_CHECKOUT_ENABLED ? "Ordering ends on September 18" : "Sold out — ordering is closed"}
       </div>
       <header className="flex h-[78px] items-center justify-between border-b border-white/15 bg-[#0b2e22] px-5 text-white md:px-[5vw]">
         <a className="flex items-center gap-3 text-white no-underline" href="#hof-top" aria-label="Eunice Hall of Fame home">
           <span className="grid size-11 place-items-center rounded-full border-2 border-[#d5a92f] text-2xl font-black">E</span>
           <span><strong className="block text-sm font-bold uppercase tracking-wider md:text-base">Eunice High School</strong><small className="mt-1 block text-[11px] opacity-70">Hall of Fame • Class of 2026</small></span>
         </a>
-        <a className="border-b border-[#d5a92f] py-2 text-xs font-bold text-white no-underline" href="#hof-order">Order shirt ↓</a>
+        {HALL_OF_FAME_CHECKOUT_ENABLED && (
+          <a className="border-b border-[#d5a92f] py-2 text-xs font-bold text-white no-underline" href="#hof-order">Order shirt ↓</a>
+        )}
       </header>
 
       <section id="hof-top" className="grid min-h-[680px] items-center gap-12 overflow-hidden bg-[radial-gradient(circle_at_75%_45%,#1a5139_0,#0b2e22_39%,#071d16_75%)] px-5 py-14 text-white md:grid-cols-[.88fr_1.12fr] md:px-[5vw] md:py-[72px]">
@@ -134,7 +137,9 @@ export default function HallOfFamePage() {
           <p className="mb-5 text-xs font-bold uppercase tracking-[.18em] text-[#d5a92f]">Once a Bobcat, always a Bobcat.</p>
           <h1 className="mb-7 text-5xl font-black uppercase leading-[.95] tracking-tight sm:text-6xl lg:text-8xl">Honor the legacy.<br/><em className="not-italic text-[#d5a92f]">Wear the moment.</em></h1>
           <p className="max-w-xl text-base leading-7 text-[#dce4df] md:text-lg">Celebrate the Eunice High School 2026 Hall of Fame with the official Mitchell #7 commemorative tee.</p>
-          <a className="mt-9 inline-flex min-h-13 items-center justify-center rounded-sm bg-[#d5a92f] px-6 font-extrabold text-[#10140f] no-underline shadow-xl hover:bg-[#e4bd4f]" href="#hof-order">Start your order</a>
+          {HALL_OF_FAME_CHECKOUT_ENABLED && (
+            <a className="mt-9 inline-flex min-h-13 items-center justify-center rounded-sm bg-[#d5a92f] px-6 font-extrabold text-[#10140f] no-underline shadow-xl hover:bg-[#e4bd4f]" href="#hof-order">Start your order</a>
+          )}
         </div>
         <div className="relative min-w-0 max-md:order-first">
           <p className="relative z-10 mx-auto mb-6 max-w-xl border-l-4 border-[#d5a92f] bg-[#071d16]/85 px-5 py-4 text-sm leading-6 text-[#e9efe9] shadow-2xl">From earning <strong className="text-[#f0c752]">All-State - All District honors</strong>, to throwing for nearly <strong className="text-[#f0c752]">4,800 career yards</strong> and 42 passing TDs, Malcolm Mitchell left a lasting mark on Bobcat football.</p>
@@ -149,9 +154,16 @@ export default function HallOfFamePage() {
         {[['01','Bobcat front','Hall of Fame 2026 crest'],['02','Mitchell back','Name and iconic #7'],['03','Three colors','Black, green, or white']].map(([number,title,detail]) => <div className="grid grid-cols-[36px_1fr] border-b border-[#12251f]/20 pb-4 md:border-b-0 md:border-r md:pb-0" key={number}><span className="row-span-2 text-xl font-black opacity-50">{number}</span><strong className="text-sm uppercase tracking-wide">{title}</strong><small>{detail}</small></div>)}
       </section>
 
-      <section id="hof-order" className="bg-gradient-to-br from-[#f8f7f2] to-[#eee9df] px-5 py-20 md:px-[6vw] md:py-24">
+      <section id={HALL_OF_FAME_CHECKOUT_ENABLED ? "hof-order" : "hof-closed"} className="bg-gradient-to-br from-[#f8f7f2] to-[#eee9df] px-5 py-20 md:px-[6vw] md:py-24">
         {paymentResult === "success" && <div className="mx-auto mb-8 max-w-[1180px] border-l-4 border-[#0d3828] bg-[#edf4ef] p-5 text-[#0d3828]" role="status"><strong className="block">Payment received.</strong><span className="text-sm">Thank you! Your Hall of Fame shirt order was completed through Stripe.</span></div>}
-        {paymentResult === "cancelled" && <div className="mx-auto mb-8 max-w-[1180px] border-l-4 border-[#d5a92f] bg-[#fff4d5] p-5 text-[#755500]" role="status"><strong className="block">Checkout cancelled.</strong><span className="text-sm">No payment was made. You can rebuild your cart whenever you’re ready.</span></div>}
+        {paymentResult === "cancelled" && (
+          <div className="mx-auto mb-8 max-w-[1180px] border-l-4 border-[#d5a92f] bg-[#fff4d5] p-5 text-[#755500]" role="status">
+            <strong className="block">Checkout cancelled.</strong>
+            <span className="text-sm">{HALL_OF_FAME_CHECKOUT_ENABLED ? "No payment was made. You can rebuild your cart whenever you’re ready." : "No payment was made. Ordering is closed, so a new order cannot be started."}</span>
+          </div>
+        )}
+        {HALL_OF_FAME_CHECKOUT_ENABLED ? (
+        <>
         <div className="mb-12 max-w-2xl"><p className="mb-3 text-xs font-bold uppercase tracking-[.18em] text-[#9b7400]">Reserve yours</p><h2 className="mb-4 text-4xl font-black uppercase leading-none md:text-6xl">Build your shirt order.</h2><p className="leading-7 text-[#667068]">Choose your color, size, and quantity.</p></div>
         <form className="grid max-w-[1180px] gap-8 lg:grid-cols-[1.3fr_.7fr]" onSubmit={startCheckout}>
           <section className="border border-[#dcd8ce] bg-white p-5 shadow-xl md:p-10">
@@ -196,11 +208,19 @@ export default function HallOfFamePage() {
             <div className="my-5 grid gap-2 border-y border-[#e2dfd7] py-4 text-sm"><p className="flex justify-between"><span className="text-[#667068]">Total shirts</span><strong>{totalQuantity}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Fulfillment</span><strong>{fulfillment}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Merchandise subtotal</span><strong>${subtotal}</strong></p><p className="flex justify-between"><span className="text-[#667068]">Shipping</span><strong>{shipping === null ? 'Quote required' : shipping === 0 ? 'Free' : `$${shipping}`}</strong></p></div>
             <div className="mb-5 flex items-center justify-between gap-4"><span className="text-sm">Order total</span><strong className="text-right text-xl font-black uppercase text-[#9b6e00]">{shipping === null ? `$${subtotal} + shipping` : `$${total}`}</strong></div>
             {shipping === null && <p className="mb-4 bg-[#fff4d5] p-3 text-xs text-[#755500]">Delivery orders above 10 shirts require a shipping quote.</p>}
-            <button className="min-h-13 w-full rounded-sm bg-[#d5a92f] px-6 font-extrabold text-[#10140f] disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={!HALL_OF_FAME_CHECKOUT_ENABLED || cart.length===0 || shipping===null || checkoutStatus==="loading"}>{!HALL_OF_FAME_CHECKOUT_ENABLED ? "Coming soon — checkout unavailable" : checkoutStatus === "loading" ? "Opening secure checkout…" : "Pay securely with Stripe →"}</button>
+            <button className="min-h-13 w-full rounded-sm bg-[#d5a92f] px-6 font-extrabold text-[#10140f] disabled:cursor-not-allowed disabled:opacity-50" type="submit" disabled={cart.length===0 || shipping===null || checkoutStatus==="loading"}>{checkoutStatus === "loading" ? "Opening secure checkout…" : "Pay securely with Stripe →"}</button>
             <p className="mt-3 text-center text-[11px] text-[#667068]">Payment is completed securely on Stripe.</p>
             {checkoutStatus === "error" && <div className="mt-4 border-l-4 border-[#8b3c2b] bg-[#fff0ec] p-4 text-xs leading-5 text-[#8b3c2b]" role="alert"><strong className="block">Checkout couldn’t start.</strong><span>{checkoutError}</span></div>}
           </aside>
         </form>
+        </>
+        ) : (
+          <div className="max-w-2xl">
+            <p className="mb-3 text-xs font-bold uppercase tracking-[.18em] text-[#9b7400]">Sold out</p>
+            <h2 className="mb-4 text-4xl font-black uppercase leading-none md:text-6xl">Ordering is closed.</h2>
+            <p className="leading-7 text-[#667068]">The Mitchell #7 commemorative tee is sold out. This page remains as a memorial. New orders are not being accepted.</p>
+          </div>
+        )}
       </section>
       <footer className="flex min-h-28 flex-col justify-center gap-2 bg-[#071d16] px-5 py-8 text-white md:flex-row md:items-center md:justify-between md:px-[5vw]"><strong className="text-2xl font-black text-[#d5a92f]">EUNICE BOBCATS</strong><span className="text-xs text-[#99aaa0]">Hall of Fame • 2026 • Mitchell #7</span></footer>
     </main>

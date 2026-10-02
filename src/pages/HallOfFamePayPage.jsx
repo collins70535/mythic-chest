@@ -28,7 +28,9 @@ export default function HallOfFamePayPage() {
 
   useEffect(() => {
     const previousTitle = document.title
-    document.title = "Pay securely | Mythic Chest — Hall of Fame 2026"
+    document.title = HALL_OF_FAME_CHECKOUT_ENABLED
+      ? "Pay securely | Mythic Chest — Hall of Fame 2026"
+      : "Ordering closed | Hall of Fame 2026"
     return () => {
       document.title = previousTitle
     }
@@ -42,6 +44,9 @@ export default function HallOfFamePayPage() {
   }, [payload])
 
   const fetchClientSecret = useCallback(async () => {
+    if (!HALL_OF_FAME_CHECKOUT_ENABLED) {
+      throw new Error("Hall of Fame 2026 ordering is closed. Checkout is unavailable.")
+    }
     if (!payload) throw new Error("Checkout session expired. Return to the order form.")
     const response = await fetch("/api/create-hall-of-fame-checkout-session", {
       method: "POST",
@@ -57,8 +62,15 @@ export default function HallOfFamePayPage() {
 
   if (!HALL_OF_FAME_CHECKOUT_ENABLED) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#130E25] px-5 text-center text-white">
-        <p>Checkout is not available right now.</p>
+      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#130E25] px-5 text-center text-white">
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#D5A92F]">Sold out</p>
+        <h1 className="text-2xl font-bold">Ordering is closed</h1>
+        <p className="max-w-md text-zinc-300">
+          Hall of Fame 2026 checkout is unavailable. The commemorative tee is sold out, and new orders cannot be completed.
+        </p>
+        <a className="rounded-sm bg-[#D5A92F] px-6 py-3 font-bold text-[#130E25] no-underline" href="/hall-of-fame-2026">
+          View the memorial
+        </a>
       </main>
     )
   }
