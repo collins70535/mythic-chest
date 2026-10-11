@@ -47,3 +47,14 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Hosting
+
+Production hosting is on **Cloudflare Pages** (project `mythic-chest`), connected
+to this repo's `main` branch — every push auto-deploys, and pull requests get
+preview URLs.
+
+- API routes live in `functions/api/` as Pages Functions (Fetch API style).
+- SPA fallback and security headers are configured via `public/_redirects` and
+  `public/_headers`.
+- The legacy Vercel serverless handlers in `api/` are kept as a rollback copy.
