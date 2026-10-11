@@ -1,0 +1,3 @@
+# Cloudflare Pages SPA fallback. Functions (functions/api/*) and static assets
+# take precedence over this rule, so /api/* is unaffected.
+/* /index.html 200

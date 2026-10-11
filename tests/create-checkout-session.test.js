@@ -22,16 +22,20 @@ function createResponse() {
   }
 }
 
-test("rejects unsupported methods", async () => {
+// NOTE: checkout is currently disabled via COMING_SOON, so these tests pin
+// the disabled behavior. The live checkout logic is covered by
+// tests/functions-create-checkout-session.test.js (re-enable those paths here
+// if COMING_SOON is ever flipped off).
+test("returns 503 coming-soon for GET while checkout is disabled", async () => {
   const response = createResponse()
 
   await handler({ method: "GET", headers: {} }, response)
 
-  assert.equal(response.statusCode, 405)
-  assert.equal(response.headers.Allow, "POST")
+  assert.equal(response.statusCode, 503)
+  assert.match(response.body.error, /coming soon/i)
 })
 
-test("rejects unrecognized cart items before contacting Stripe", async () => {
+test("returns 503 coming-soon without contacting Stripe", async () => {
   process.env.STRIPE_SECRET_KEY = "sk_test_placeholder"
   const originalFetch = globalThis.fetch
   let called = false
@@ -47,22 +51,19 @@ test("rejects unrecognized cart items before contacting Stripe", async () => {
   )
 
   globalThis.fetch = originalFetch
-  assert.equal(response.statusCode, 400)
+  assert.equal(response.statusCode, 503)
   assert.equal(called, false)
 })
 
-test("uses the server-side catalog price when creating Checkout", async () => {
+test("does not create a Checkout session while coming-soon is enabled", async () => {
   process.env.STRIPE_SECRET_KEY = "sk_test_placeholder"
   process.env.PUBLIC_SITE_URL = "https://www.mythicchest.com/"
   process.env.STRIPE_AUTOMATIC_TAX = "false"
   const originalFetch = globalThis.fetch
-  let stripeRequest
-  globalThis.fetch = async (url, options) => {
-    stripeRequest = { url, options }
-    return new Response(JSON.stringify({ url: "https://checkout.stripe.com/test-session" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    })
+  let called = false
+  globalThis.fetch = async () => {
+    called = true
+    throw new Error("Stripe should not be called")
   }
   const response = createResponse()
 
@@ -76,16 +77,6 @@ test("uses the server-side catalog price when creating Checkout", async () => {
   )
 
   globalThis.fetch = originalFetch
-  const params = new URLSearchParams(stripeRequest.options.body)
-  assert.equal(response.statusCode, 200)
-  assert.equal(response.body.url, "https://checkout.stripe.com/test-session")
-  assert.equal(params.get("line_items[0][price_data][unit_amount]"), "8999")
-  assert.equal(params.get("line_items[0][quantity]"), "2")
-  assert.equal(params.get("payment_method_types[0]"), "card")
-  assert.equal(params.get("shipping_options[0][shipping_rate_data][fixed_amount][amount]"), "1200")
-  assert.equal(params.get("automatic_tax[enabled]"), "false")
-  assert.equal(
-    params.get("success_url"),
-    "https://www.mythicchest.com/checkout/success?session_id={CHECKOUT_SESSION_ID}",
-  )
+  assert.equal(response.statusCode, 503)
+  assert.equal(called, false)
 })
