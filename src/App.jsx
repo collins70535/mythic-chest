@@ -8,6 +8,7 @@ import AboutPage from "./pages/AboutPage"
 import CheckoutPage from "./pages/CheckoutPage"
 import CheckoutSuccessPage from "./pages/CheckoutSuccessPage"
 import CollectionPage from "./pages/CollectionPage"
+import CustomTeePage from "./pages/CustomTeePage"
 import HomePage from "./pages/HomePage"
 import ProductPage from "./pages/ProductPage"
 import HallOfFamePage from "./pages/HallOfFamePage"
@@ -35,6 +36,7 @@ function AppContent() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="/collections/:categoryId" element={<CollectionPage />} />
+          <Route path="/custom-tee" element={<CustomTeePage />} />
           <Route path="/product/:slug" element={<ProductPage />} />
         </Routes>
 
