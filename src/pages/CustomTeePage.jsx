@@ -1,9 +1,12 @@
 import { useRef, useState } from "react"
-import blankShirt from "../assets/custom-tee-blank.png"
+import blackShirt from "../assets/custom-tee-blank.png"
+import whiteShirt from "../assets/custom-tee-white.png"
+import navyShirt from "../assets/custom-tee-navy.png"
+import charcoalShirt from "../assets/custom-tee-charcoal.png"
 import { useCart } from "../context/useCart"
 
 // Retail pricing from the 2026-10-12 cost research:
-// Gildan 64000 Softstyle (black) + $4 DTF print + $0.35 packaging per shirt.
+// Gildan 64000 Softstyle + $4 DTF print + $0.35 packaging per shirt.
 const SIZES = [
   { label: "S", price: 25 },
   { label: "M", price: 25 },
@@ -13,10 +16,11 @@ const SIZES = [
   { label: "3XL", price: 30 },
 ]
 
-const INCLUDED = [
-  "Gildan 64000 Softstyle tee — black",
-  "Full-front DTF print of your design",
-  "Packaging included",
+const COLORS = [
+  { name: "Black", image: blackShirt, swatch: "#151515" },
+  { name: "White", image: whiteShirt, swatch: "#f2f2f2" },
+  { name: "Navy", image: navyShirt, swatch: "#1c2a4a" },
+  { name: "Charcoal", image: charcoalShirt, swatch: "#3d3d3d" },
 ]
 
 const MIN_INCHES = 4
@@ -41,12 +45,19 @@ export default function CustomTeePage() {
   const [printInches, setPrintInches] = useState(DEFAULT_INCHES)
   const [pos, setPos] = useState({ x: 50, y: 40 })
   const [size, setSize] = useState("L")
+  const [colorName, setColorName] = useState("Black")
 
   const previewRef = useRef(null)
   const dragState = useRef(null)
   const fileInputRef = useRef(null)
 
   const selectedSize = SIZES.find((s) => s.label === size)
+  const selectedColor = COLORS.find((c) => c.name === colorName) ?? COLORS[0]
+  const included = [
+    `Gildan 64000 Softstyle tee — ${selectedColor.name.toLowerCase()}`,
+    "Full-front DTF print of your design",
+    "Packaging included",
+  ]
 
   const handleFile = (file) => {
     if (!file || !file.type.startsWith("image/")) return
@@ -91,11 +102,11 @@ export default function CustomTeePage() {
     if (!designUrl || !selectedSize) return
     const slug = fileName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
     addItem({
-      id: `custom-tee-${size.toLowerCase()}-${slug || "design"}`,
+      id: `custom-tee-${selectedColor.name.toLowerCase()}-${size.toLowerCase()}-${slug || "design"}`,
       slug: "custom-tee",
-      name: `Custom Tee (${size})`,
+      name: `Custom Tee (${selectedColor.name}, ${size})`,
       price: `$${selectedSize.price.toFixed(2)}`,
-      image: blankShirt,
+      image: selectedColor.image,
     })
   }
 
@@ -106,7 +117,7 @@ export default function CustomTeePage() {
       </h1>
       <p className="mt-3 max-w-2xl text-white/70">
         Upload your artwork, see it on the shirt, dial in the size and
-        placement, then pick your size. Printed on a black Gildan 64000
+        placement, then pick your color and size. Printed on a Gildan 64000
         Softstyle tee.
       </p>
 
@@ -118,8 +129,8 @@ export default function CustomTeePage() {
             className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
           >
             <img
-              src={blankShirt}
-              alt="Black Gildan 64000 Softstyle t-shirt preview"
+              src={selectedColor.image}
+              alt={`${selectedColor.name} Gildan 64000 Softstyle t-shirt preview`}
               className="block w-full select-none"
               draggable={false}
             />
@@ -229,11 +240,31 @@ export default function CustomTeePage() {
             </button>
           </section>
 
-          {/* Step 3: Size + price */}
+          {/* Step 3: Color + size + price */}
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <h2 className="text-lg font-bold">
-              <span className="mr-2 text-blue-400">3</span> Pick your size
+              <span className="mr-2 text-blue-400">3</span> Pick your color and
+              size
             </h2>
+            <div className="mt-3 flex items-center gap-3">
+              {COLORS.map((option) => (
+                <button
+                  key={option.name}
+                  type="button"
+                  title={option.name}
+                  aria-label={`Shirt color ${option.name}`}
+                  aria-pressed={colorName === option.name}
+                  onClick={() => setColorName(option.name)}
+                  className={`h-10 w-10 rounded-full border-2 transition ${
+                    colorName === option.name
+                      ? "border-blue-400 ring-2 ring-blue-400/40"
+                      : "border-white/20 hover:border-white/50"
+                  }`}
+                  style={{ backgroundColor: option.swatch }}
+                />
+              ))}
+              <span className="text-sm text-white/70">{selectedColor.name}</span>
+            </div>
             <div className="mt-3 grid grid-cols-3 gap-2">
               {SIZES.map((option) => (
                 <button
@@ -262,7 +293,7 @@ export default function CustomTeePage() {
                 </span>
               </div>
               <ul className="mt-3 space-y-1 text-sm text-white/70">
-                {INCLUDED.map((item) => (
+                {included.map((item) => (
                   <li key={item} className="flex gap-2">
                     <span className="text-blue-400">&#10003;</span>
                     {item}
