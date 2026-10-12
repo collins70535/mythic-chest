@@ -112,6 +112,49 @@ export default function CustomTeePage() {
 
   const clearSide = (side) => updateSide(side, emptySideArt())
 
+  // Render the on-screen preview (shirt + placed design) to a PNG.
+  // Same-origin assets and data-URL designs keep the canvas untainted.
+  const renderPreviewPNG = (side) =>
+    new Promise((resolve) => {
+      const sideArt = art[side]
+      const shirtImg = new Image()
+      shirtImg.onload = () => {
+        const canvas = document.createElement("canvas")
+        canvas.width = shirtImg.naturalWidth
+        canvas.height = shirtImg.naturalHeight
+        const ctx = canvas.getContext("2d")
+        ctx.drawImage(shirtImg, 0, 0)
+
+        if (!sideArt.url) {
+          resolve(canvas.toDataURL("image/png"))
+          return
+        }
+
+        const designImg = new Image()
+        designImg.onload = () => {
+          const w = (inchesToPct(sideArt.inches) / 100) * canvas.width
+          const h = w * (designImg.naturalHeight / designImg.naturalWidth)
+          const cx = (sideArt.pos.x / 100) * canvas.width
+          const cy = (sideArt.pos.y / 100) * canvas.height
+          ctx.drawImage(designImg, cx - w / 2, cy - h / 2, w, h)
+          resolve(canvas.toDataURL("image/png"))
+        }
+        designImg.onerror = () => resolve(null)
+        designImg.src = sideArt.url
+      }
+      shirtImg.onerror = () => resolve(null)
+      shirtImg.src = selectedColor[side]
+    })
+
+  const downloadPreview = async (side) => {
+    const url = await renderPreviewPNG(side)
+    if (!url) return
+    const link = document.createElement("a")
+    link.href = url
+    link.download = `mythic-chest-tee-${selectedColor.name.toLowerCase()}-${side}-preview.png`
+    link.click()
+  }
+
   const setQty = (label, delta) => {
     setQuantities((current) => ({
       ...current,
@@ -314,6 +357,13 @@ export default function CustomTeePage() {
                       </div>
                     )}
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => downloadPreview(side)}
+                    className="mt-2 rounded-lg border border-white/10 px-3 py-1.5 text-xs hover:border-blue-400 hover:text-blue-300"
+                  >
+                    Download {side} preview
+                  </button>
                 </div>
               )
             })}
