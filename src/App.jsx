@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom"
 
 import CartDrawer from "./components/CartDrawer"
 import Navbar from "./components/Navbar"
@@ -8,7 +8,8 @@ import AboutPage from "./pages/AboutPage"
 import CheckoutPage from "./pages/CheckoutPage"
 import CheckoutSuccessPage from "./pages/CheckoutSuccessPage"
 import CollectionPage from "./pages/CollectionPage"
-import CustomTeePage from "./pages/CustomTeePage"
+import CustomApparelPage from "./pages/CustomApparelPage"
+import GarmentDesignerPage from "./pages/GarmentDesignerPage"
 import HomePage from "./pages/HomePage"
 import ProductPage from "./pages/ProductPage"
 import HallOfFamePage from "./pages/HallOfFamePage"
@@ -36,7 +37,12 @@ function AppContent() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="/collections/:categoryId" element={<CollectionPage />} />
-          <Route path="/custom-tee" element={<CustomTeePage />} />
+          <Route path="/custom-apparel" element={<CustomApparelPage />} />
+          <Route path="/custom/:garmentSlug" element={<GarmentDesignerPage />} />
+          <Route
+            path="/custom-tee"
+            element={<Navigate to="/custom-apparel" replace />}
+          />
           <Route path="/product/:slug" element={<ProductPage />} />
         </Routes>
 

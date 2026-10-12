@@ -1,61 +1,9 @@
 import { useRef, useState } from "react"
+import { Link, useParams } from "react-router-dom"
 import { useCart } from "../context/useCart"
-
-// Retail pricing from the 2026-10-12 cost research:
-// Garment blank + $7 DTF print per side + $0.35 packaging per item.
-const GARMENTS = {
-  tee: {
-    label: "Tee",
-    cartName: "Custom Tee",
-    description: "Gildan Softstyle tee",
-    minQty: 10,
-    sizes: [
-      { label: "S", price: 25 },
-      { label: "M", price: 25 },
-      { label: "L", price: 25 },
-      { label: "XL", price: 25 },
-      { label: "2XL", price: 28 },
-      { label: "3XL", price: 30 },
-    ],
-  },
-  hoodie: {
-    label: "Hoodie",
-    cartName: "Custom Hoodie",
-    description: "Gildan Heavy Blend hoodie",
-    minQty: 10,
-    sizes: [
-      { label: "S", price: 30 },
-      { label: "M", price: 30 },
-      { label: "L", price: 30 },
-      { label: "XL", price: 30 },
-      { label: "2XL", price: 35 },
-      { label: "3XL", price: 38 },
-    ],
-  },
-}
-
-// Orderable colors (JiffyShirts stock for Gildan 64000 / 18500, verified 2026-10-12).
-// Mockups live in public/mockups as custom-{tee|hoodie}-{slug}-{front|back}.png
-const COLORS = [
-  { name: "Black", slug: "black", swatch: "#151515" },
-  { name: "White", slug: "white", swatch: "#f2f2f2" },
-  { name: "Navy", slug: "navy", swatch: "#1c2a4a" },
-  { name: "Charcoal", slug: "charcoal", swatch: "#3d3d3d" },
-  { name: "Red", slug: "red", swatch: "#b91c1c" },
-  { name: "Royal", slug: "royal", swatch: "#1e40af" },
-  { name: "Forest Green", slug: "forest-green", swatch: "#14532d" },
-  { name: "Purple", slug: "purple", swatch: "#6b21a8" },
-  { name: "Orange", slug: "orange", swatch: "#ea580c" },
-  { name: "Gold", slug: "gold", swatch: "#eab308" },
-  { name: "Carolina Blue", slug: "carolina-blue", swatch: "#60a5fa" },
-  { name: "Sport Grey", slug: "sport-grey", swatch: "#9ca3af" },
-]
-
-const mockup = (garment, colorSlug, side) =>
-  `/mockups/custom-${garment}-${colorSlug}-${side}.png`
+import { BACK_PRINT_PRICE, GARMENTS } from "../config/garments"
 
 const SIDES = ["front", "back"]
-const BACK_PRINT_PRICE = 7
 
 const MIN_INCHES = 4
 const MAX_INCHES = 12
@@ -75,12 +23,12 @@ function emptySideArt() {
   return { url: null, name: "", pos: { x: 50, y: 40 }, inches: DEFAULT_INCHES }
 }
 
-export default function CustomTeePage() {
+export default function GarmentDesignerPage() {
+  const { garmentSlug } = useParams()
   const { addItem } = useCart()
   const [art, setArt] = useState({ front: emptySideArt(), back: emptySideArt() })
   const [dragOver, setDragOver] = useState(null)
   const [designDescription, setDesignDescription] = useState("")
-  const [garmentKey, setGarmentKey] = useState("tee")
   const [colorSlug, setColorSlug] = useState("black")
   const [quantities, setQuantities] = useState({})
   const [notes, setNotes] = useState("")
@@ -89,17 +37,40 @@ export default function CustomTeePage() {
   const dragState = useRef(null)
   const fileInputRefs = useRef({})
 
-  const garment = GARMENTS[garmentKey]
+  const garment = GARMENTS[garmentSlug]
+
+  if (!garment || !garment.available) {
+    return (
+      <div className="mx-auto max-w-2xl px-5 py-20 text-center md:px-8">
+        <h1 className="text-4xl font-black tracking-tight">
+          Coming soon
+        </h1>
+        <p className="mt-3 text-white/70">
+          We&apos;re still lining up blanks for this one. Check back shortly —
+          or start with a garment that&apos;s ready today.
+        </p>
+        <Link
+          to="/custom-apparel"
+          className="mt-6 inline-block rounded-xl bg-blue-500 px-6 py-3 font-bold uppercase tracking-wider text-white transition hover:bg-blue-400"
+        >
+          Browse garments
+        </Link>
+      </div>
+    )
+  }
+
   const sizes = garment.sizes
   const minQty = garment.minQty
-  const selectedColor = COLORS.find((c) => c.slug === colorSlug) ?? COLORS[0]
+  const colors = garment.colors
+  const mockup = garment.mockup
+  const selectedColor = colors.find((c) => c.slug === colorSlug) ?? colors[0]
   const hasBackArt = art.back.url !== null
   const hasFrontArt = art.front.url !== null
 
   const unitPrice = (base) => base + (hasBackArt ? BACK_PRINT_PRICE : 0)
 
   const included = [
-    `${garment.description} — ${selectedColor.name.toLowerCase()}`,
+    `${garment.blurb} — ${selectedColor.name.toLowerCase()}`,
     "Front DTF print of your design",
     ...(hasBackArt ? ["Back DTF print"] : []),
     "Packaging included",
@@ -185,18 +156,16 @@ export default function CustomTeePage() {
           ? "back print"
           : "front print"
     const brief = designDescription.trim()
-    const itemNoun = garmentKey === "hoodie" ? "hoodie" : "shirt"
-
     sizes.forEach((s) => {
       const qty = quantities[s.label] ?? 0
       if (qty === 0) return
       addItem(
         {
-          id: `custom-${garmentKey}-${selectedColor.slug}-${s.label.toLowerCase()}-${sidesLabel}-${frontSlug || "design"}`,
-          slug: `custom-${garmentKey}`,
-          name: `${garment.cartName} (${selectedColor.name}, ${s.label}, ${sidesName})`,
+          id: `custom-${garment.slug}-${selectedColor.slug}-${s.label.toLowerCase()}-${sidesLabel}-${frontSlug || "design"}`,
+          slug: `custom-${garment.slug}`,
+          name: `${garment.name} (${selectedColor.name}, ${s.label}, ${sidesName})`,
           price: `$${unitPrice(s.price).toFixed(2)}`,
-          image: mockup(garmentKey, selectedColor.slug, "front"),
+          image: mockup(selectedColor.slug, "front"),
           notes: notes.trim() || undefined,
           designBrief: brief || undefined,
         },
@@ -205,16 +174,12 @@ export default function CustomTeePage() {
     })
   }
 
-  let addLabel = "Add to Cart"
-  if (!hasArtwork) {
-    addLabel = "Upload art or describe your design"
-  } else if (totalQty < minQty) {
-    const remaining = minQty - totalQty
-    addLabel = `Add ${remaining} more ${garmentKey === "hoodie" ? "hoodie" : "shirt"}${remaining === 1 ? "" : "s"} (${minQty} minimum)`
-  } else {
-    const noun = garmentKey === "hoodie" ? "hoodies" : "shirts"
-    addLabel = `Add ${totalQty} ${noun} — $${totalPrice.toFixed(2)}`
-  }
+  const remaining = minQty - totalQty
+  const addLabel = !hasArtwork
+    ? "Upload art or describe your design"
+    : totalQty < minQty
+      ? `Add ${remaining} more ${garment.itemNoun}${remaining === 1 ? "" : "s"} (${minQty} minimum)`
+      : `Add ${totalQty} ${garment.itemNounPlural} — $${totalPrice.toFixed(2)}`
 
   const renderUpload = (side, title, hint) => (
     <div className="mt-3">
@@ -279,14 +244,20 @@ export default function CustomTeePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-14">
-      <h1 className="text-4xl font-black tracking-tight md:text-5xl">
-        Design Your Own Apparel
+      <Link
+        to="/custom-apparel"
+        className="text-sm font-bold uppercase tracking-widest text-blue-400 hover:text-blue-300"
+      >
+        &larr; All garments
+      </Link>
+      <h1 className="mt-2 text-4xl font-black tracking-tight md:text-5xl">
+        {garment.name}
       </h1>
       <p className="mt-3 max-w-2xl text-white/70">
         Upload your artwork or describe what you want — we&apos;ll work with
-        you to create the perfect design. Printed with DTF on a Softstyle tee
-        or Heavy Blend hoodie, front and optional back print. Custom orders
-        have a {minQty}-item minimum.
+        you to create the perfect design. Printed with DTF on a {garment.blurb},
+        front and optional back print. Custom orders have a {minQty}-item
+        minimum.
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-5">
@@ -307,8 +278,8 @@ export default function CustomTeePage() {
                     className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
                   >
                     <img
-                      src={mockup(garmentKey, selectedColor.slug, side)}
-                      alt={`${selectedColor.name} ${garment.description} ${side} preview`}
+                      src={mockup(selectedColor.slug, side)}
+                      alt={`${selectedColor.name} ${garment.blurb} ${side} preview`}
                       className="block w-full select-none"
                       draggable={false}
                     />
@@ -365,40 +336,10 @@ export default function CustomTeePage() {
 
         {/* Controls */}
         <div className="flex flex-col gap-6 lg:col-span-2">
-          {/* Step 1: Garment */}
+          {/* Step 1: Artwork */}
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <h2 className="text-lg font-bold">
-              <span className="mr-2 text-blue-400">1</span> Pick your garment
-            </h2>
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {Object.entries(GARMENTS).map(([key, g]) => (
-                <button
-                  key={key}
-                  type="button"
-                  aria-pressed={garmentKey === key}
-                  onClick={() => setGarmentKey(key)}
-                  className={`rounded-xl border-2 px-4 py-3 text-left transition ${
-                    garmentKey === key
-                      ? "border-blue-400 bg-blue-500/10"
-                      : "border-white/10 hover:border-white/30"
-                  }`}
-                >
-                  <span className="block font-bold">{g.label}</span>
-                  <span className="block text-xs text-white/60">
-                    {g.description}
-                  </span>
-                  <span className="mt-1 block text-sm font-bold text-blue-300">
-                    from ${g.sizes[0].price}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </section>
-
-          {/* Step 2: Artwork */}
-          <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <h2 className="text-lg font-bold">
-              <span className="mr-2 text-blue-400">2</span> Your artwork
+              <span className="mr-2 text-blue-400">1</span> Your artwork
             </h2>
             {renderUpload(
               "front",
@@ -438,7 +379,7 @@ export default function CustomTeePage() {
           {/* Step 3: Adjust */}
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <h2 className="text-lg font-bold">
-              <span className="mr-2 text-blue-400">3</span> Size your prints
+              <span className="mr-2 text-blue-400">2</span> Size your prints
             </h2>
             {SIDES.filter((side) => art[side].url).map((side) => (
               <div key={side} className="mt-3">
@@ -482,11 +423,11 @@ export default function CustomTeePage() {
           {/* Step 4: Color, sizes, quantity */}
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <h2 className="text-lg font-bold">
-              <span className="mr-2 text-blue-400">4</span> Color, sizes, and
+              <span className="mr-2 text-blue-400">3</span> Color, sizes, and
               quantity
             </h2>
             <div className="mt-3 flex flex-wrap items-center gap-3">
-              {COLORS.map((option) => (
+              {colors.map((option) => (
                 <button
                   key={option.slug}
                   type="button"
@@ -548,7 +489,7 @@ export default function CustomTeePage() {
             <div className="mt-5 border-t border-white/10 pt-4">
               <div className="flex items-baseline justify-between">
                 <span className="text-sm text-white/70">
-                  Total ({totalQty} {garmentKey === "hoodie" ? "hoodie" : "shirt"}
+                  Total ({totalQty} {garment.itemNoun}
                   {totalQty === 1 ? "" : "s"})
                 </span>
                 <span className="text-3xl font-black text-blue-400">

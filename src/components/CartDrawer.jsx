@@ -64,7 +64,7 @@ export default function CartDrawer() {
               <div className="grid gap-5">
                 {items.map((item) => (
                   <div key={item.id} className="grid grid-cols-[88px_1fr] gap-4">
-                    {item.slug === "custom-tee" ? (
+                    {item.slug.startsWith("custom-") ? (
                       <img
                         src={item.image}
                         alt={item.name}
@@ -82,7 +82,7 @@ export default function CartDrawer() {
 
                     <div>
                       <div className="flex items-start justify-between gap-3">
-                        {item.slug === "custom-tee" ? (
+                        {item.slug.startsWith("custom-") ? (
                           <span className="font-bold">{item.name}</span>
                         ) : (
                           <Link
