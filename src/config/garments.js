@@ -78,37 +78,101 @@ export const GARMENTS = {
     slug: "quarter-zip",
     name: "Quarter Zip",
     label: "Quarter Zip",
-    blurb: "Quarter-zip pullover",
+    blurb: "Sport-Tek ST253 quarter-zip",
     cardDescription: "Quarter-zip pullover — soft fleece, clean look",
     cardImage: "/garments/quarter-zip.png",
     available: false,
+    minQty: 10,
+    itemNoun: "quarter-zip",
+    itemNounPlural: "quarter-zips",
+    // JiffyShirts black blanks verified 2026-10-12: S–XL $29.93, 2XL $31.68,
+    // 3XL $35.21. Retail = blank + $7 print + $0.35 packaging + ~$9 profit.
+    sizes: [
+      { label: "S", price: 46 },
+      { label: "M", price: 46 },
+      { label: "L", price: 46 },
+      { label: "XL", price: 46 },
+      { label: "2XL", price: 48 },
+      { label: "3XL", price: 52 },
+    ],
+    colors: [], // TODO: verify orderable colors (10 total on JiffyShirts)
+    mockup: (colorSlug, side) =>
+      `/mockups/custom-quarter-zip-${colorSlug}-${side}.png`,
   },
   "ls-tee": {
     slug: "ls-tee",
     name: "Long-Sleeve Tee",
     label: "Long-Sleeve Tee",
-    blurb: "Long-sleeve tee",
+    blurb: "Gildan G540 long-sleeve tee",
     cardDescription: "Long-sleeve tee — lightweight cotton, everyday wear",
     cardImage: "/garments/ls-tee.png",
     available: false,
+    minQty: 10,
+    itemNoun: "shirt",
+    itemNounPlural: "shirts",
+    // JiffyShirts black blanks verified 2026-10-12: S $4.98, M–XL $7.53,
+    // 2XL $10.01, 3XL $14.01. Retail = blank + $7 + $0.35 + ~$14 profit.
+    sizes: [
+      { label: "S", price: 26 },
+      { label: "M", price: 29 },
+      { label: "L", price: 29 },
+      { label: "XL", price: 29 },
+      { label: "2XL", price: 31 },
+      { label: "3XL", price: 35 },
+    ],
+    colors: [], // TODO: verify orderable colors (24 total on JiffyShirts)
+    mockup: (colorSlug, side) =>
+      `/mockups/custom-ls-tee-${colorSlug}-${side}.png`,
   },
   jersey: {
     slug: "jersey",
     name: "Team Jersey",
     label: "Jersey",
-    blurb: "Performance team jersey",
+    blurb: "Sport-Tek ST350 performance jersey",
     cardDescription: "Performance jersey — breathable mesh, custom numbers",
     cardImage: "/garments/jersey.png",
     available: false,
+    minQty: 10,
+    itemNoun: "jersey",
+    itemNounPlural: "jerseys",
+    // JiffyShirts black blanks verified 2026-10-12: S–XL $7.02, 2XL $8.21,
+    // 3XL $12.31. Retail = blank + $7 + $0.35 + ~$14 profit.
+    sizes: [
+      { label: "S", price: 28 },
+      { label: "M", price: 28 },
+      { label: "L", price: 28 },
+      { label: "XL", price: 28 },
+      { label: "2XL", price: 30 },
+      { label: "3XL", price: 34 },
+    ],
+    colors: [], // TODO: verify orderable colors (35 total on JiffyShirts)
+    mockup: (colorSlug, side) =>
+      `/mockups/custom-jersey-${colorSlug}-${side}.png`,
   },
   polo: {
     slug: "polo",
     name: "Polo",
     label: "Polo",
-    blurb: "Pique polo",
+    blurb: "Gildan G880 pique polo",
     cardDescription: "Pique polo — collar, breathable cotton",
     cardImage: "/garments/polo.png",
     available: false,
+    minQty: 10,
+    itemNoun: "polo",
+    itemNounPlural: "polos",
+    // JiffyShirts black blanks verified 2026-10-12: S $7.98, M–XL $9.70,
+    // 2XL $16.13, 3XL $18.73. Retail = blank + $7 + $0.35 + ~$14 profit.
+    sizes: [
+      { label: "S", price: 29 },
+      { label: "M", price: 31 },
+      { label: "L", price: 31 },
+      { label: "XL", price: 31 },
+      { label: "2XL", price: 37 },
+      { label: "3XL", price: 40 },
+    ],
+    colors: [], // TODO: verify orderable colors (19 total on JiffyShirts)
+    mockup: (colorSlug, side) =>
+      `/mockups/custom-polo-${colorSlug}-${side}.png`,
   },
 }
 
