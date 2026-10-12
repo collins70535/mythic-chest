@@ -57,14 +57,13 @@ function emptySideArt() {
 export default function CustomTeePage() {
   const { addItem } = useCart()
   const [art, setArt] = useState({ front: emptySideArt(), back: emptySideArt() })
-  const [viewSide, setViewSide] = useState("front")
   const [dragOver, setDragOver] = useState(null)
   const [designDescription, setDesignDescription] = useState("")
   const [colorName, setColorName] = useState("Black")
   const [quantities, setQuantities] = useState({})
   const [notes, setNotes] = useState("")
 
-  const previewRef = useRef(null)
+  const previewRefs = useRef({})
   const dragState = useRef(null)
   const fileInputRefs = useRef({})
 
@@ -118,15 +117,18 @@ export default function CustomTeePage() {
   }
 
   const onDesignPointerDown = (event) => {
-    if (!previewRef.current) return
+    const side = event.currentTarget.dataset.side
+    const panel = previewRefs.current[side]
+    if (!panel) return
     event.preventDefault()
-    const rect = previewRef.current.getBoundingClientRect()
+    const rect = panel.getBoundingClientRect()
     dragState.current = {
       rect,
+      side,
       startX: event.clientX,
       startY: event.clientY,
-      origX: art[viewSide].pos.x,
-      origY: art[viewSide].pos.y,
+      origX: art[side].pos.x,
+      origY: art[side].pos.y,
     }
     event.currentTarget.setPointerCapture(event.pointerId)
   }
@@ -140,7 +142,7 @@ export default function CustomTeePage() {
       x: clamp(drag.origX + dx, 8, 92),
       y: clamp(drag.origY + dy, 12, 88),
     }
-    updateSide(viewSide, { pos })
+    updateSide(drag.side, { pos })
   }
 
   const onDesignPointerUp = () => {
@@ -201,13 +203,6 @@ export default function CustomTeePage() {
           <div className="flex shrink-0 gap-2">
             <button
               type="button"
-              onClick={() => setViewSide(side)}
-              className="rounded-lg border border-white/10 px-2 py-1 text-xs hover:border-blue-400 hover:text-blue-300"
-            >
-              Preview
-            </button>
-            <button
-              type="button"
               onClick={() => clearSide(side)}
               className="rounded-lg border border-white/10 px-2 py-1 text-xs hover:border-red-400 hover:text-red-300"
             >
@@ -253,8 +248,6 @@ export default function CustomTeePage() {
     </div>
   )
 
-  const viewing = art[viewSide]
-
   return (
     <div className="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-14">
       <h1 className="text-4xl font-black tracking-tight md:text-5xl">
@@ -270,59 +263,57 @@ export default function CustomTeePage() {
       <div className="mt-8 grid gap-8 lg:grid-cols-5">
         {/* Preview */}
         <div className="lg:col-span-3">
-          <div className="mb-3 flex gap-2">
-            {SIDES.map((side) => (
-              <button
-                key={side}
-                type="button"
-                onClick={() => setViewSide(side)}
-                aria-pressed={viewSide === side}
-                className={`rounded-xl px-5 py-2 text-sm font-bold uppercase tracking-wider transition ${
-                  viewSide === side
-                    ? "bg-blue-500 text-white"
-                    : "border border-white/10 bg-white/5 text-white/60 hover:text-white"
-                }`}
-              >
-                {side}
-              </button>
-            ))}
-          </div>
-          <div
-            ref={previewRef}
-            className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
-          >
-            <img
-              src={selectedColor[viewSide]}
-              alt={`${selectedColor.name} Softstyle t-shirt ${viewSide} preview`}
-              className="block w-full select-none"
-              draggable={false}
-            />
-            {viewing.url ? (
-              <img
-                src={viewing.url}
-                alt={`Your ${viewSide} design preview`}
-                draggable={false}
-                onPointerDown={onDesignPointerDown}
-                onPointerMove={onDesignPointerMove}
-                onPointerUp={onDesignPointerUp}
-                onPointerCancel={onDesignPointerUp}
-                className="absolute cursor-grab touch-none select-none active:cursor-grabbing"
-                style={{
-                  left: `${viewing.pos.x}%`,
-                  top: `${viewing.pos.y}%`,
-                  width: `${inchesToPct(viewing.inches)}%`,
-                  transform: "translate(-50%, -50%)",
-                }}
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center p-6">
-                <p className="rounded-lg bg-black/60 px-4 py-2 text-center text-sm text-white/80">
-                  {designDescription.trim()
-                    ? "Thanks — we'll create your design together after you order."
-                    : `Upload a ${viewSide} design to see it here`}
-                </p>
-              </div>
-            )}
+          <div className="grid gap-6">
+            {SIDES.map((side) => {
+              const sideArt = art[side]
+              return (
+                <div key={side}>
+                  <h3 className="mb-2 text-sm font-bold uppercase tracking-widest text-white/60">
+                    {side} preview
+                  </h3>
+                  <div
+                    ref={(el) => {
+                      previewRefs.current[side] = el
+                    }}
+                    className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+                  >
+                    <img
+                      src={selectedColor[side]}
+                      alt={`${selectedColor.name} Softstyle t-shirt ${side} preview`}
+                      className="block w-full select-none"
+                      draggable={false}
+                    />
+                    {sideArt.url ? (
+                      <img
+                        src={sideArt.url}
+                        alt={`Your ${side} design preview`}
+                        data-side={side}
+                        draggable={false}
+                        onPointerDown={onDesignPointerDown}
+                        onPointerMove={onDesignPointerMove}
+                        onPointerUp={onDesignPointerUp}
+                        onPointerCancel={onDesignPointerUp}
+                        className="absolute cursor-grab touch-none select-none active:cursor-grabbing"
+                        style={{
+                          left: `${sideArt.pos.x}%`,
+                          top: `${sideArt.pos.y}%`,
+                          width: `${inchesToPct(sideArt.inches)}%`,
+                          transform: "translate(-50%, -50%)",
+                        }}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center p-6">
+                        <p className="rounded-lg bg-black/60 px-4 py-2 text-center text-sm text-white/80">
+                          {designDescription.trim()
+                            ? "Thanks — we'll create your design together after you order."
+                            : `Upload a ${side} design to see it here`}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
           <p className="mt-2 text-xs text-white/50">
             Preview is approximate — drag the design to reposition it. Final
