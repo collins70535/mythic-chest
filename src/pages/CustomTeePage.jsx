@@ -23,6 +23,8 @@ const COLORS = [
   { name: "Charcoal", image: charcoalShirt, swatch: "#3d3d3d" },
 ]
 
+const MIN_SHIRTS = 10
+
 const MIN_INCHES = 4
 const MAX_INCHES = 12
 const DEFAULT_INCHES = 10
@@ -42,26 +44,35 @@ export default function CustomTeePage() {
   const [designUrl, setDesignUrl] = useState(null)
   const [fileName, setFileName] = useState("")
   const [dragOver, setDragOver] = useState(false)
+  const [designDescription, setDesignDescription] = useState("")
   const [printInches, setPrintInches] = useState(DEFAULT_INCHES)
   const [pos, setPos] = useState({ x: 50, y: 40 })
-  const [size, setSize] = useState("L")
   const [colorName, setColorName] = useState("Black")
-  const [aiPrompt, setAiPrompt] = useState("")
-  const [aiStatus, setAiStatus] = useState("idle")
-  const [aiError, setAiError] = useState("")
+  const [quantities, setQuantities] = useState({})
   const [notes, setNotes] = useState("")
 
   const previewRef = useRef(null)
   const dragState = useRef(null)
   const fileInputRef = useRef(null)
 
-  const selectedSize = SIZES.find((s) => s.label === size)
   const selectedColor = COLORS.find((c) => c.name === colorName) ?? COLORS[0]
   const included = [
     `Softstyle tee — ${selectedColor.name.toLowerCase()}`,
     "Full-front DTF print of your design",
     "Packaging included",
   ]
+
+  const totalQty = SIZES.reduce(
+    (sum, s) => sum + (quantities[s.label] ?? 0),
+    0,
+  )
+  const totalPrice = SIZES.reduce(
+    (sum, s) => sum + (quantities[s.label] ?? 0) * s.price,
+    0,
+  )
+  const hasArtwork =
+    designUrl !== null || designDescription.trim().length > 0
+  const canAdd = hasArtwork && totalQty >= MIN_SHIRTS
 
   const handleFile = (file) => {
     if (!file || !file.type.startsWith("image/")) return
@@ -73,30 +84,11 @@ export default function CustomTeePage() {
     reader.readAsDataURL(file)
   }
 
-  const handleGenerate = async () => {
-    const prompt = aiPrompt.trim()
-    if (prompt.length < 4 || aiStatus === "generating") return
-    setAiStatus("generating")
-    setAiError("")
-    try {
-      const response = await fetch("/api/generate-design", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      })
-      const result = await response.json().catch(() => null)
-      if (!response.ok || !result?.imageUrl) {
-        throw new Error(
-          result?.error || "The design could not be generated. Please try again.",
-        )
-      }
-      setDesignUrl(result.imageUrl)
-      setFileName("ai-generated-design.png")
-    } catch (err) {
-      setAiError(err.message)
-    } finally {
-      setAiStatus("idle")
-    }
+  const setQty = (label, delta) => {
+    setQuantities((current) => ({
+      ...current,
+      [label]: Math.max(0, (current[label] ?? 0) + delta),
+    }))
   }
 
   const onDesignPointerDown = (event) => {
@@ -129,16 +121,39 @@ export default function CustomTeePage() {
   }
 
   const handleAddToCart = () => {
-    if (!designUrl || !selectedSize) return
-    const slug = fileName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
-    addItem({
-      id: `custom-tee-${selectedColor.name.toLowerCase()}-${size.toLowerCase()}-${slug || "design"}`,
-      slug: "custom-tee",
-      name: `Custom Tee (${selectedColor.name}, ${size})`,
-      price: `$${selectedSize.price.toFixed(2)}`,
-      image: selectedColor.image,
-      notes: notes.trim() || undefined,
+    if (!canAdd) return
+    const slug = fileName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+    const brief = designDescription.trim()
+
+    SIZES.forEach((s) => {
+      const qty = quantities[s.label] ?? 0
+      if (qty === 0) return
+      addItem(
+        {
+          id: `custom-tee-${selectedColor.name.toLowerCase()}-${s.label.toLowerCase()}-${slug || "design"}`,
+          slug: "custom-tee",
+          name: `Custom Tee (${selectedColor.name}, ${s.label})`,
+          price: `$${s.price.toFixed(2)}`,
+          image: selectedColor.image,
+          notes: notes.trim() || undefined,
+          designBrief: brief || undefined,
+        },
+        qty,
+      )
     })
+  }
+
+  let addLabel = "Add to Cart"
+  if (!hasArtwork) {
+    addLabel = "Upload art or describe your design"
+  } else if (totalQty < MIN_SHIRTS) {
+    const remaining = MIN_SHIRTS - totalQty
+    addLabel = `Add ${remaining} more shirt${remaining === 1 ? "" : "s"} (10 minimum)`
+  } else {
+    addLabel = `Add ${totalQty} shirts — $${totalPrice.toFixed(2)}`
   }
 
   return (
@@ -147,9 +162,9 @@ export default function CustomTeePage() {
         Design Your Own Tee
       </h1>
       <p className="mt-3 max-w-2xl text-white/70">
-        Upload your artwork, see it on the shirt, dial in the size and
-        placement, then pick your color and size. Printed on a Softstyle
-        tee.
+        Upload your artwork or describe what you want — we&apos;ll work with
+        you to create the perfect design. Printed on a Softstyle tee.
+        Custom tees have a {MIN_SHIRTS}-shirt minimum.
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-5">
@@ -183,9 +198,11 @@ export default function CustomTeePage() {
                 }}
               />
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <p className="rounded-lg bg-black/60 px-4 py-2 text-sm text-white/80">
-                  Upload your design to see it here
+              <div className="absolute inset-0 flex items-center justify-center p-6">
+                <p className="rounded-lg bg-black/60 px-4 py-2 text-center text-sm text-white/80">
+                  {designDescription.trim()
+                    ? "Thanks — we'll create your design together after you order."
+                    : "Upload your design to see it here"}
                 </p>
               </div>
             )}
@@ -198,10 +215,10 @@ export default function CustomTeePage() {
 
         {/* Controls */}
         <div className="flex flex-col gap-6 lg:col-span-2">
-          {/* Step 1: Upload */}
+          {/* Step 1: Artwork */}
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <h2 className="text-lg font-bold">
-              <span className="mr-2 text-blue-400">1</span> Upload your design
+              <span className="mr-2 text-blue-400">1</span> Your artwork
             </h2>
             <button
               type="button"
@@ -243,29 +260,22 @@ export default function CustomTeePage() {
               <span className="h-px flex-1 bg-white/10" />
             </div>
 
-            <label className="block text-sm text-white/70" htmlFor="ai-prompt">
-              Describe the design you want
+            <label
+              className="block text-sm text-white/70"
+              htmlFor="design-description"
+            >
+              No artwork? Tell us what you want — we&apos;ll work with you to
+              create it.
             </label>
             <textarea
-              id="ai-prompt"
+              id="design-description"
               rows={3}
-              value={aiPrompt}
-              onChange={(e) => setAiPrompt(e.target.value)}
+              value={designDescription}
+              onChange={(e) => setDesignDescription(e.target.value)}
               placeholder="e.g. a roaring dragon wrapped around a basketball, neon colors"
               maxLength={500}
               className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-blue-400 focus:outline-none"
             />
-            {aiError && (
-              <p className="mt-2 text-sm text-red-300">{aiError}</p>
-            )}
-            <button
-              type="button"
-              onClick={handleGenerate}
-              disabled={aiPrompt.trim().length < 4 || aiStatus === "generating"}
-              className="mt-2 w-full rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {aiStatus === "generating" ? "Creating your design..." : "Generate design"}
-            </button>
           </section>
 
           {/* Step 2: Adjust */}
@@ -301,11 +311,11 @@ export default function CustomTeePage() {
             </button>
           </section>
 
-          {/* Step 3: Color + size + price */}
+          {/* Step 3: Color, sizes, quantity */}
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <h2 className="text-lg font-bold">
-              <span className="mr-2 text-blue-400">3</span> Pick your color and
-              size
+              <span className="mr-2 text-blue-400">3</span> Color, sizes, and
+              quantity
             </h2>
             <div className="mt-3 flex items-center gap-3">
               {COLORS.map((option) => (
@@ -326,33 +336,59 @@ export default function CustomTeePage() {
               ))}
               <span className="text-sm text-white/70">{selectedColor.name}</span>
             </div>
-            <div className="mt-3 grid grid-cols-3 gap-2">
+
+            <div className="mt-4 grid gap-2">
               {SIZES.map((option) => (
-                <button
+                <div
                   key={option.label}
-                  type="button"
-                  onClick={() => setSize(option.label)}
-                  className={`rounded-xl border px-3 py-3 text-center transition ${
-                    size === option.label
-                      ? "border-blue-400 bg-blue-500/20"
-                      : "border-white/10 bg-black/40 hover:border-blue-400/60"
-                  }`}
+                  className="flex items-center justify-between rounded-xl border border-white/10 bg-black/40 px-4 py-2.5"
                 >
-                  <span className="block font-bold">{option.label}</span>
-                  <span className="block text-sm text-white/70">
-                    ${option.price}
-                  </span>
-                </button>
+                  <div>
+                    <span className="font-bold">{option.label}</span>{" "}
+                    <span className="text-sm text-white/60">
+                      ${option.price}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      aria-label={`Remove one ${option.label}`}
+                      onClick={() => setQty(option.label, -1)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-lg hover:bg-white/10"
+                    >
+                      &minus;
+                    </button>
+                    <span className="w-8 text-center font-bold">
+                      {quantities[option.label] ?? 0}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label={`Add one ${option.label}`}
+                      onClick={() => setQty(option.label, 1)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-lg hover:bg-white/10"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
 
             <div className="mt-5 border-t border-white/10 pt-4">
               <div className="flex items-baseline justify-between">
-                <span className="text-sm text-white/70">Your price</span>
+                <span className="text-sm text-white/70">
+                  Total ({totalQty} shirt{totalQty === 1 ? "" : "s"})
+                </span>
                 <span className="text-3xl font-black text-blue-400">
-                  ${selectedSize.price.toFixed(2)}
+                  ${totalPrice.toFixed(2)}
                 </span>
               </div>
+              {totalQty < MIN_SHIRTS && (
+                <p className="mt-1 text-sm text-amber-300">
+                  {MIN_SHIRTS - totalQty} more to reach the {MIN_SHIRTS}-shirt
+                  minimum.
+                </p>
+              )}
               <ul className="mt-3 space-y-1 text-sm text-white/70">
                 {included.map((item) => (
                   <li key={item} className="flex gap-2">
@@ -381,11 +417,11 @@ export default function CustomTeePage() {
               />
               <button
                 type="button"
-                disabled={!designUrl}
+                disabled={!canAdd}
                 onClick={handleAddToCart}
                 className="mt-4 w-full rounded-xl bg-blue-500 px-6 py-3 font-bold uppercase tracking-wider text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {designUrl ? "Add to Cart" : "Upload a design first"}
+                {addLabel}
               </button>
             </div>
           </section>

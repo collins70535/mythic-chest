@@ -95,6 +95,11 @@ export default function CartDrawer() {
                         )}
                         <p className="shrink-0 text-blue-400">{item.price}</p>
                       </div>
+                      {item.designBrief && (
+                        <p className="mt-1 text-xs italic text-white/50">
+                          Design request: {item.designBrief}
+                        </p>
+                      )}
                       {item.notes && (
                         <p className="mt-1 text-xs italic text-white/50">
                           Note: {item.notes}
