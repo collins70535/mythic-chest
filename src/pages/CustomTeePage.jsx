@@ -6,7 +6,7 @@ import charcoalShirt from "../assets/custom-tee-charcoal.png"
 import { useCart } from "../context/useCart"
 
 // Retail pricing from the 2026-10-12 cost research:
-// Gildan 64000 Softstyle + $4 DTF print + $0.35 packaging per shirt.
+// Softstyle tee + $4 DTF print + $0.35 packaging per shirt.
 const SIZES = [
   { label: "S", price: 25 },
   { label: "M", price: 25 },
@@ -54,7 +54,7 @@ export default function CustomTeePage() {
   const selectedSize = SIZES.find((s) => s.label === size)
   const selectedColor = COLORS.find((c) => c.name === colorName) ?? COLORS[0]
   const included = [
-    `Gildan 64000 Softstyle tee — ${selectedColor.name.toLowerCase()}`,
+    `Softstyle tee — ${selectedColor.name.toLowerCase()}`,
     "Full-front DTF print of your design",
     "Packaging included",
   ]
@@ -117,8 +117,8 @@ export default function CustomTeePage() {
       </h1>
       <p className="mt-3 max-w-2xl text-white/70">
         Upload your artwork, see it on the shirt, dial in the size and
-        placement, then pick your color and size. Printed on a Gildan 64000
-        Softstyle tee.
+        placement, then pick your color and size. Printed on a Softstyle
+        tee.
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-5">
@@ -130,7 +130,7 @@ export default function CustomTeePage() {
           >
             <img
               src={selectedColor.image}
-              alt={`${selectedColor.name} Gildan 64000 Softstyle t-shirt preview`}
+              alt={`${selectedColor.name} Softstyle t-shirt preview`}
               className="block w-full select-none"
               draggable={false}
             />
