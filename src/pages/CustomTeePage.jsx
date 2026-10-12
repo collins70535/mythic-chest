@@ -7,6 +7,8 @@ import navyFront from "../assets/custom-tee-navy.png"
 import navyBack from "../assets/custom-tee-back-navy.png"
 import charcoalFront from "../assets/custom-tee-charcoal.png"
 import charcoalBack from "../assets/custom-tee-back-charcoal.png"
+import redFront from "../assets/custom-tee-red.png"
+import redBack from "../assets/custom-tee-back-red.png"
 import { useCart } from "../context/useCart"
 
 // Retail pricing from the 2026-10-12 cost research:
@@ -30,6 +32,7 @@ const COLORS = [
     back: charcoalBack,
     swatch: "#3d3d3d",
   },
+  { name: "Red", front: redFront, back: redBack, swatch: "#b91c1c" },
 ]
 
 const SIDES = ["front", "back"]
