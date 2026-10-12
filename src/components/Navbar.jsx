@@ -7,7 +7,7 @@ import { COMING_SOON, COMING_SOON_BANNER } from "../config/comingSoon"
 const navLinks = [
   { label: "Shop", href: "/#shop" },
   { label: "Collections", href: "/#shop" },
-  { label: "Custom Tee", href: "/custom-tee" },
+  { label: "Custom Apparel", href: "/custom-tee" },
   { label: "About", href: "/about" },
 ]
 
