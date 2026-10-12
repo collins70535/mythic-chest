@@ -1,12 +1,16 @@
 import { useRef, useState } from "react"
-import blackShirt from "../assets/custom-tee-blank.png"
-import whiteShirt from "../assets/custom-tee-white.png"
-import navyShirt from "../assets/custom-tee-navy.png"
-import charcoalShirt from "../assets/custom-tee-charcoal.png"
+import blackFront from "../assets/custom-tee-blank.png"
+import blackBack from "../assets/custom-tee-back-black.png"
+import whiteFront from "../assets/custom-tee-white.png"
+import whiteBack from "../assets/custom-tee-back-white.png"
+import navyFront from "../assets/custom-tee-navy.png"
+import navyBack from "../assets/custom-tee-back-navy.png"
+import charcoalFront from "../assets/custom-tee-charcoal.png"
+import charcoalBack from "../assets/custom-tee-back-charcoal.png"
 import { useCart } from "../context/useCart"
 
 // Retail pricing from the 2026-10-12 cost research:
-// Softstyle tee + $4 DTF print + $0.35 packaging per shirt.
+// Softstyle tee + $4 DTF print per side + $0.35 packaging per shirt.
 const SIZES = [
   { label: "S", price: 25 },
   { label: "M", price: 25 },
@@ -17,12 +21,19 @@ const SIZES = [
 ]
 
 const COLORS = [
-  { name: "Black", image: blackShirt, swatch: "#151515" },
-  { name: "White", image: whiteShirt, swatch: "#f2f2f2" },
-  { name: "Navy", image: navyShirt, swatch: "#1c2a4a" },
-  { name: "Charcoal", image: charcoalShirt, swatch: "#3d3d3d" },
+  { name: "Black", front: blackFront, back: blackBack, swatch: "#151515" },
+  { name: "White", front: whiteFront, back: whiteBack, swatch: "#f2f2f2" },
+  { name: "Navy", front: navyFront, back: navyBack, swatch: "#1c2a4a" },
+  {
+    name: "Charcoal",
+    front: charcoalFront,
+    back: charcoalBack,
+    swatch: "#3d3d3d",
+  },
 ]
 
+const SIDES = ["front", "back"]
+const BACK_PRINT_PRICE = 4
 const MIN_SHIRTS = 10
 
 const MIN_INCHES = 4
@@ -39,26 +50,34 @@ function inchesToPct(inches) {
   return (inches / 30) * 100
 }
 
+function emptySideArt() {
+  return { url: null, name: "", pos: { x: 50, y: 40 }, inches: DEFAULT_INCHES }
+}
+
 export default function CustomTeePage() {
   const { addItem } = useCart()
-  const [designUrl, setDesignUrl] = useState(null)
-  const [fileName, setFileName] = useState("")
-  const [dragOver, setDragOver] = useState(false)
+  const [art, setArt] = useState({ front: emptySideArt(), back: emptySideArt() })
+  const [viewSide, setViewSide] = useState("front")
+  const [dragOver, setDragOver] = useState(null)
   const [designDescription, setDesignDescription] = useState("")
-  const [printInches, setPrintInches] = useState(DEFAULT_INCHES)
-  const [pos, setPos] = useState({ x: 50, y: 40 })
   const [colorName, setColorName] = useState("Black")
   const [quantities, setQuantities] = useState({})
   const [notes, setNotes] = useState("")
 
   const previewRef = useRef(null)
   const dragState = useRef(null)
-  const fileInputRef = useRef(null)
+  const fileInputRefs = useRef({})
 
   const selectedColor = COLORS.find((c) => c.name === colorName) ?? COLORS[0]
+  const hasBackArt = art.back.url !== null
+  const hasFrontArt = art.front.url !== null
+
+  const unitPrice = (base) => base + (hasBackArt ? BACK_PRINT_PRICE : 0)
+
   const included = [
     `Softstyle tee — ${selectedColor.name.toLowerCase()}`,
-    "Full-front DTF print of your design",
+    "Front DTF print of your design",
+    ...(hasBackArt ? ["Back DTF print"] : []),
     "Packaging included",
   ]
 
@@ -67,22 +86,29 @@ export default function CustomTeePage() {
     0,
   )
   const totalPrice = SIZES.reduce(
-    (sum, s) => sum + (quantities[s.label] ?? 0) * s.price,
+    (sum, s) => sum + (quantities[s.label] ?? 0) * unitPrice(s.price),
     0,
   )
   const hasArtwork =
-    designUrl !== null || designDescription.trim().length > 0
+    hasFrontArt || hasBackArt || designDescription.trim().length > 0
   const canAdd = hasArtwork && totalQty >= MIN_SHIRTS
 
-  const handleFile = (file) => {
+  const updateSide = (side, patch) =>
+    setArt((current) => ({
+      ...current,
+      [side]: { ...current[side], ...patch },
+    }))
+
+  const handleFile = (file, side) => {
     if (!file || !file.type.startsWith("image/")) return
     const reader = new FileReader()
     reader.onload = () => {
-      setDesignUrl(reader.result)
-      setFileName(file.name)
+      updateSide(side, { url: reader.result, name: file.name })
     }
     reader.readAsDataURL(file)
   }
+
+  const clearSide = (side) => updateSide(side, emptySideArt())
 
   const setQty = (label, delta) => {
     setQuantities((current) => ({
@@ -99,8 +125,8 @@ export default function CustomTeePage() {
       rect,
       startX: event.clientX,
       startY: event.clientY,
-      origX: pos.x,
-      origY: pos.y,
+      origX: art[viewSide].pos.x,
+      origY: art[viewSide].pos.y,
     }
     event.currentTarget.setPointerCapture(event.pointerId)
   }
@@ -110,10 +136,11 @@ export default function CustomTeePage() {
     if (!drag) return
     const dx = ((event.clientX - drag.startX) / drag.rect.width) * 100
     const dy = ((event.clientY - drag.startY) / drag.rect.height) * 100
-    setPos({
+    const pos = {
       x: clamp(drag.origX + dx, 8, 92),
       y: clamp(drag.origY + dy, 12, 88),
-    })
+    }
+    updateSide(viewSide, { pos })
   }
 
   const onDesignPointerUp = () => {
@@ -122,10 +149,12 @@ export default function CustomTeePage() {
 
   const handleAddToCart = () => {
     if (!canAdd) return
-    const slug = fileName
+    const frontSlug = art.front.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "")
+    const sidesLabel = hasFrontArt && hasBackArt ? "front-back" : hasBackArt ? "back" : "front"
+    const sidesName = hasFrontArt && hasBackArt ? "front + back" : hasBackArt ? "back print" : "front print"
     const brief = designDescription.trim()
 
     SIZES.forEach((s) => {
@@ -133,11 +162,11 @@ export default function CustomTeePage() {
       if (qty === 0) return
       addItem(
         {
-          id: `custom-tee-${selectedColor.name.toLowerCase()}-${s.label.toLowerCase()}-${slug || "design"}`,
+          id: `custom-tee-${selectedColor.name.toLowerCase()}-${s.label.toLowerCase()}-${sidesLabel}-${frontSlug || "design"}`,
           slug: "custom-tee",
-          name: `Custom Tee (${selectedColor.name}, ${s.label})`,
-          price: `$${s.price.toFixed(2)}`,
-          image: selectedColor.image,
+          name: `Custom Tee (${selectedColor.name}, ${s.label}, ${sidesName})`,
+          price: `$${unitPrice(s.price).toFixed(2)}`,
+          image: selectedColor.front,
           notes: notes.trim() || undefined,
           designBrief: brief || undefined,
         },
@@ -156,6 +185,76 @@ export default function CustomTeePage() {
     addLabel = `Add ${totalQty} shirts — $${totalPrice.toFixed(2)}`
   }
 
+  const renderUpload = (side, title, hint) => (
+    <div className="mt-3">
+      <p className="text-sm font-semibold">
+        {title}{" "}
+        {side === "back" && (
+          <span className="font-normal text-white/50">
+            (optional, +${BACK_PRINT_PRICE}/shirt)
+          </span>
+        )}
+      </p>
+      {art[side].url ? (
+        <div className="mt-2 flex items-center justify-between rounded-xl border border-white/10 bg-black/40 px-3 py-2">
+          <span className="truncate text-sm text-white/80">{art[side].name}</span>
+          <div className="flex shrink-0 gap-2">
+            <button
+              type="button"
+              onClick={() => setViewSide(side)}
+              className="rounded-lg border border-white/10 px-2 py-1 text-xs hover:border-blue-400 hover:text-blue-300"
+            >
+              Preview
+            </button>
+            <button
+              type="button"
+              onClick={() => clearSide(side)}
+              className="rounded-lg border border-white/10 px-2 py-1 text-xs hover:border-red-400 hover:text-red-300"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => fileInputRefs.current[side]?.click()}
+          onDragOver={(e) => {
+            e.preventDefault()
+            setDragOver(side)
+          }}
+          onDragLeave={() => setDragOver(null)}
+          onDrop={(e) => {
+            e.preventDefault()
+            setDragOver(null)
+            handleFile(e.dataTransfer.files?.[0], side)
+          }}
+          className={`mt-2 flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-6 text-center transition ${
+            dragOver === side
+              ? "border-blue-400 bg-blue-500/10"
+              : "border-white/20 hover:border-blue-400/60"
+          }`}
+        >
+          <span className="text-sm font-semibold">
+            Drop an image here or click to browse
+          </span>
+          <span className="mt-1 text-xs text-white/50">{hint}</span>
+        </button>
+      )}
+      <input
+        ref={(el) => {
+          fileInputRefs.current[side] = el
+        }}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => handleFile(e.target.files?.[0], side)}
+      />
+    </div>
+  )
+
+  const viewing = art[viewSide]
+
   return (
     <div className="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-14">
       <h1 className="text-4xl font-black tracking-tight md:text-5xl">
@@ -163,27 +262,45 @@ export default function CustomTeePage() {
       </h1>
       <p className="mt-3 max-w-2xl text-white/70">
         Upload your artwork or describe what you want — we&apos;ll work with
-        you to create the perfect design. Printed on a Softstyle tee.
-        Custom tees have a {MIN_SHIRTS}-shirt minimum.
+        you to create the perfect design. Printed on a Softstyle tee, front
+        and optional back print. Custom tees have a {MIN_SHIRTS}-shirt
+        minimum.
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-5">
         {/* Preview */}
         <div className="lg:col-span-3">
+          <div className="mb-3 flex gap-2">
+            {SIDES.map((side) => (
+              <button
+                key={side}
+                type="button"
+                onClick={() => setViewSide(side)}
+                aria-pressed={viewSide === side}
+                className={`rounded-xl px-5 py-2 text-sm font-bold uppercase tracking-wider transition ${
+                  viewSide === side
+                    ? "bg-blue-500 text-white"
+                    : "border border-white/10 bg-white/5 text-white/60 hover:text-white"
+                }`}
+              >
+                {side}
+              </button>
+            ))}
+          </div>
           <div
             ref={previewRef}
             className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
           >
             <img
-              src={selectedColor.image}
-              alt={`${selectedColor.name} Softstyle t-shirt preview`}
+              src={selectedColor[viewSide]}
+              alt={`${selectedColor.name} Softstyle t-shirt ${viewSide} preview`}
               className="block w-full select-none"
               draggable={false}
             />
-            {designUrl ? (
+            {viewing.url ? (
               <img
-                src={designUrl}
-                alt="Your design preview"
+                src={viewing.url}
+                alt={`Your ${viewSide} design preview`}
                 draggable={false}
                 onPointerDown={onDesignPointerDown}
                 onPointerMove={onDesignPointerMove}
@@ -191,9 +308,9 @@ export default function CustomTeePage() {
                 onPointerCancel={onDesignPointerUp}
                 className="absolute cursor-grab touch-none select-none active:cursor-grabbing"
                 style={{
-                  left: `${pos.x}%`,
-                  top: `${pos.y}%`,
-                  width: `${inchesToPct(printInches)}%`,
+                  left: `${viewing.pos.x}%`,
+                  top: `${viewing.pos.y}%`,
+                  width: `${inchesToPct(viewing.inches)}%`,
                   transform: "translate(-50%, -50%)",
                 }}
               />
@@ -202,7 +319,7 @@ export default function CustomTeePage() {
                 <p className="rounded-lg bg-black/60 px-4 py-2 text-center text-sm text-white/80">
                   {designDescription.trim()
                     ? "Thanks — we'll create your design together after you order."
-                    : "Upload your design to see it here"}
+                    : `Upload a ${viewSide} design to see it here`}
                 </p>
               </div>
             )}
@@ -220,39 +337,16 @@ export default function CustomTeePage() {
             <h2 className="text-lg font-bold">
               <span className="mr-2 text-blue-400">1</span> Your artwork
             </h2>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              onDragOver={(e) => {
-                e.preventDefault()
-                setDragOver(true)
-              }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={(e) => {
-                e.preventDefault()
-                setDragOver(false)
-                handleFile(e.dataTransfer.files?.[0])
-              }}
-              className={`mt-3 flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-8 text-center transition ${
-                dragOver
-                  ? "border-blue-400 bg-blue-500/10"
-                  : "border-white/20 hover:border-blue-400/60"
-              }`}
-            >
-              <span className="text-sm font-semibold">
-                {fileName || "Drop an image here or click to browse"}
-              </span>
-              <span className="mt-1 text-xs text-white/50">
-                PNG, JPG, or WebP — transparent PNG works best
-              </span>
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => handleFile(e.target.files?.[0])}
-            />
+            {renderUpload(
+              "front",
+              "Front design",
+              "PNG, JPG, or WebP — transparent PNG works best",
+            )}
+            {renderUpload(
+              "back",
+              "Back design",
+              "PNG, JPG, or WebP — transparent PNG works best",
+            )}
 
             <div className="my-4 flex items-center gap-3 text-xs uppercase tracking-widest text-white/40">
               <span className="h-px flex-1 bg-white/10" />
@@ -281,34 +375,45 @@ export default function CustomTeePage() {
           {/* Step 2: Adjust */}
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <h2 className="text-lg font-bold">
-              <span className="mr-2 text-blue-400">2</span> Size your print
+              <span className="mr-2 text-blue-400">2</span> Size your prints
             </h2>
-            <label className="mt-3 block text-sm text-white/70">
-              Print width:{" "}
-              <span className="font-bold text-white">{printInches}&Prime;</span>
-              <span className="text-white/50">
-                {" "}
-                (typical full front is 10&ndash;12&Prime;)
-              </span>
-            </label>
-            <input
-              type="range"
-              min={MIN_INCHES}
-              max={MAX_INCHES}
-              step={0.5}
-              value={printInches}
-              disabled={!designUrl}
-              onChange={(e) => setPrintInches(Number(e.target.value))}
-              className="mt-2 w-full accent-blue-500 disabled:opacity-40"
-            />
-            <button
-              type="button"
-              disabled={!designUrl}
-              onClick={() => setPos({ x: 50, y: 40 })}
-              className="mt-2 rounded-lg border border-white/10 px-3 py-1.5 text-xs hover:border-blue-400 hover:text-blue-300 disabled:opacity-40"
-            >
-              Reset position
-            </button>
+            {SIDES.filter((side) => art[side].url).map((side) => (
+              <div key={side} className="mt-3">
+                <label className="block text-sm capitalize text-white/70">
+                  {side} print width:{" "}
+                  <span className="font-bold text-white">
+                    {art[side].inches}&Prime;
+                  </span>
+                  <span className="text-white/50">
+                    {" "}
+                    (typical full print is 10&ndash;12&Prime;)
+                  </span>
+                </label>
+                <input
+                  type="range"
+                  min={MIN_INCHES}
+                  max={MAX_INCHES}
+                  step={0.5}
+                  value={art[side].inches}
+                  onChange={(e) =>
+                    updateSide(side, { inches: Number(e.target.value) })
+                  }
+                  className="mt-2 w-full accent-blue-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => updateSide(side, { pos: { x: 50, y: 40 } })}
+                  className="mt-1 rounded-lg border border-white/10 px-3 py-1.5 text-xs hover:border-blue-400 hover:text-blue-300"
+                >
+                  Reset {side} position
+                </button>
+              </div>
+            ))}
+            {!hasFrontArt && !hasBackArt && (
+              <p className="mt-3 text-sm text-white/50">
+                Upload a design above to adjust its size and placement.
+              </p>
+            )}
           </section>
 
           {/* Step 3: Color, sizes, quantity */}
@@ -346,7 +451,10 @@ export default function CustomTeePage() {
                   <div>
                     <span className="font-bold">{option.label}</span>{" "}
                     <span className="text-sm text-white/60">
-                      ${option.price}
+                      ${unitPrice(option.price).toFixed(2)}
+                      {hasBackArt && (
+                        <span className="text-white/40"> incl. back</span>
+                      )}
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
