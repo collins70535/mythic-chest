@@ -111,7 +111,7 @@ export default function CustomTeePage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-10 md:px-8 md:py-14">
+    <div className="mx-auto max-w-7xl px-5 py-10 md:px-8 md:py-14">
       <h1 className="text-4xl font-black tracking-tight md:text-5xl">
         Design Your Own Tee
       </h1>
@@ -121,9 +121,9 @@ export default function CustomTeePage() {
         Softstyle tee.
       </p>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-2">
+      <div className="mt-8 grid gap-8 lg:grid-cols-5">
         {/* Preview */}
-        <div>
+        <div className="lg:col-span-3">
           <div
             ref={previewRef}
             className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
@@ -166,7 +166,7 @@ export default function CustomTeePage() {
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 lg:col-span-2">
           {/* Step 1: Upload */}
           <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <h2 className="text-lg font-bold">
