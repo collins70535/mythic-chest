@@ -64,25 +64,42 @@ export default function CartDrawer() {
               <div className="grid gap-5">
                 {items.map((item) => (
                   <div key={item.id} className="grid grid-cols-[88px_1fr] gap-4">
-                    <Link to={`/product/${item.slug}`} onClick={closeCart}>
+                    {item.slug === "custom-tee" ? (
                       <img
                         src={item.image}
                         alt={item.name}
                         className="h-24 w-22 rounded-lg object-cover"
                       />
-                    </Link>
+                    ) : (
+                      <Link to={`/product/${item.slug}`} onClick={closeCart}>
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="h-24 w-22 rounded-lg object-cover"
+                        />
+                      </Link>
+                    )}
 
                     <div>
                       <div className="flex items-start justify-between gap-3">
-                        <Link
-                          to={`/product/${item.slug}`}
-                          className="font-bold hover:text-blue-300"
-                          onClick={closeCart}
-                        >
-                          {item.name}
-                        </Link>
+                        {item.slug === "custom-tee" ? (
+                          <span className="font-bold">{item.name}</span>
+                        ) : (
+                          <Link
+                            to={`/product/${item.slug}`}
+                            className="font-bold hover:text-blue-300"
+                            onClick={closeCart}
+                          >
+                            {item.name}
+                          </Link>
+                        )}
                         <p className="shrink-0 text-blue-400">{item.price}</p>
                       </div>
+                      {item.notes && (
+                        <p className="mt-1 text-xs italic text-white/50">
+                          Note: {item.notes}
+                        </p>
+                      )}
 
                       <div className="mt-4 flex items-center justify-between gap-3">
                         <div className="flex items-center rounded-lg border border-white/10">

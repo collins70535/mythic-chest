@@ -46,6 +46,10 @@ export default function CustomTeePage() {
   const [pos, setPos] = useState({ x: 50, y: 40 })
   const [size, setSize] = useState("L")
   const [colorName, setColorName] = useState("Black")
+  const [aiPrompt, setAiPrompt] = useState("")
+  const [aiStatus, setAiStatus] = useState("idle")
+  const [aiError, setAiError] = useState("")
+  const [notes, setNotes] = useState("")
 
   const previewRef = useRef(null)
   const dragState = useRef(null)
@@ -67,6 +71,32 @@ export default function CustomTeePage() {
       setFileName(file.name)
     }
     reader.readAsDataURL(file)
+  }
+
+  const handleGenerate = async () => {
+    const prompt = aiPrompt.trim()
+    if (prompt.length < 4 || aiStatus === "generating") return
+    setAiStatus("generating")
+    setAiError("")
+    try {
+      const response = await fetch("/api/generate-design", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      })
+      const result = await response.json().catch(() => null)
+      if (!response.ok || !result?.imageUrl) {
+        throw new Error(
+          result?.error || "The design could not be generated. Please try again.",
+        )
+      }
+      setDesignUrl(result.imageUrl)
+      setFileName("ai-generated-design.png")
+    } catch (err) {
+      setAiError(err.message)
+    } finally {
+      setAiStatus("idle")
+    }
   }
 
   const onDesignPointerDown = (event) => {
@@ -107,6 +137,7 @@ export default function CustomTeePage() {
       name: `Custom Tee (${selectedColor.name}, ${size})`,
       price: `$${selectedSize.price.toFixed(2)}`,
       image: selectedColor.image,
+      notes: notes.trim() || undefined,
     })
   }
 
@@ -205,6 +236,36 @@ export default function CustomTeePage() {
               className="hidden"
               onChange={(e) => handleFile(e.target.files?.[0])}
             />
+
+            <div className="my-4 flex items-center gap-3 text-xs uppercase tracking-widest text-white/40">
+              <span className="h-px flex-1 bg-white/10" />
+              or describe it
+              <span className="h-px flex-1 bg-white/10" />
+            </div>
+
+            <label className="block text-sm text-white/70" htmlFor="ai-prompt">
+              Describe the design you want
+            </label>
+            <textarea
+              id="ai-prompt"
+              rows={3}
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+              placeholder="e.g. a roaring dragon wrapped around a basketball, neon colors"
+              maxLength={500}
+              className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-blue-400 focus:outline-none"
+            />
+            {aiError && (
+              <p className="mt-2 text-sm text-red-300">{aiError}</p>
+            )}
+            <button
+              type="button"
+              onClick={handleGenerate}
+              disabled={aiPrompt.trim().length < 4 || aiStatus === "generating"}
+              className="mt-2 w-full rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {aiStatus === "generating" ? "Creating your design..." : "Generate design"}
+            </button>
           </section>
 
           {/* Step 2: Adjust */}
@@ -303,6 +364,21 @@ export default function CustomTeePage() {
               <p className="mt-2 text-xs text-white/50">
                 Shipping calculated at checkout.
               </p>
+              <label
+                className="mt-4 block text-sm text-white/70"
+                htmlFor="order-notes"
+              >
+                Notes for us <span className="text-white/40">(optional)</span>
+              </label>
+              <textarea
+                id="order-notes"
+                rows={3}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Anything we should know about your design or order?"
+                maxLength={500}
+                className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-blue-400 focus:outline-none"
+              />
               <button
                 type="button"
                 disabled={!designUrl}
