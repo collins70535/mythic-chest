@@ -33,11 +33,11 @@ export default function CustomApparelPage() {
                 Coming soon
               </span>
             )}
-            <div className="aspect-[4/3] overflow-hidden bg-white/5">
+            <div className="aspect-[4/3] overflow-hidden bg-[#e8e8e8]">
               <img
                 src={garment.cardImage}
                 alt={garment.name}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
                 loading="lazy"
               />
             </div>
