@@ -1,12 +1,13 @@
-import CategoryGrid from "../components/CategoryGrid"
+import FeaturedSection from "../components/FeaturedSection"
 import Hero from "../components/Hero"
-import categories from "../data/categories"
+import TrustBar from "../components/TrustBar"
 
 export default function HomePage() {
   return (
     <>
       <Hero />
-      <CategoryGrid categories={categories} />
+      <TrustBar />
+      <FeaturedSection />
     </>
   )
 }

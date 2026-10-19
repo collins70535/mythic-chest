@@ -26,10 +26,10 @@ export default function AboutPage() {
               Shop Collections
             </Link>
             <Link
-              to="/collections/action-bases"
+              to="/collections/accessories"
               className="rounded-xl border border-white/10 px-6 py-3 font-semibold hover:border-blue-400 hover:text-blue-300"
             >
-              View Action Bases
+              View Accessories
             </Link>
           </div>
         </div>

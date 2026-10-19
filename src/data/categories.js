@@ -1,34 +1,44 @@
 import actionBasesImage from "../assets/categories/action-bases.png"
 import blokkeesChampionImage from "../assets/categories/blokkees-champion-kits.png"
+import comicsImage from "../assets/categories/comics.jpg"
 import gundamModelsImage from "../assets/categories/gundam-models.png"
 
 const categories = [
   {
-    id: "gundam-models",
-    name: "Gundam Models",
-    eyebrow: "Master Grade / High Grade / Real Grade",
+    id: "model-kits",
+    name: "Model Kits",
+    eyebrow: "Gunpla / High Grade / Master Grade",
     description:
-      "Awesome Gunpla kits for builders who want centerpiece models and classic shelf presence.",
+      "Awesome Gunpla and snap-build kits for builders who want centerpiece models and classic shelf presence.",
     image: gundamModelsImage,
-    href: "/collections/gundam-models",
+    href: "/collections/model-kits",
   },
   {
-    id: "blokkees-champion",
-    name: "Blokkees Champion Class",
-    eyebrow: "Snap-build collectible kits",
+    id: "figures",
+    name: "Figures",
+    eyebrow: "Snap-build figures / display collectibles",
     description:
-      "Champion Class Blokkees kits with display-ready figures, accessories, and collector packaging.",
+      "Display-ready figures and collectible kits with accessories and collector packaging.",
     image: blokkeesChampionImage,
-    href: "/collections/blokkees-champion",
+    href: "/collections/figures",
   },
   {
-    id: "action-bases",
-    name: "3D Printed Action Bases",
-    eyebrow: "Flight stands / adapters / display parts",
+    id: "comics",
+    name: "Comics",
+    eyebrow: "Graphic novels / manga / collected editions",
     description:
-      "Modular action bases, support arms, and posing adapters made for cleaner display setups.",
+      "Graphic novels, manga, and collected editions worth making shelf space for.",
+    image: comicsImage,
+    href: "/collections/comics",
+  },
+  {
+    id: "accessories",
+    name: "Accessories",
+    eyebrow: "Action bases / stands / display gear",
+    description:
+      "Modular action bases, support arms, posing adapters, and display gear for cleaner setups.",
     image: actionBasesImage,
-    href: "/collections/action-bases",
+    href: "/collections/accessories",
   },
 ]
 

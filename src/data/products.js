@@ -6,7 +6,7 @@ const products = [
   {
     id: 1,
     slug: "rx-78-gundam",
-    categoryId: "gundam-models",
+    categoryId: "model-kits",
     category: "Universal Century",
     series: "Mobile Suit Gundam",
     grade: "Master Grade",
@@ -26,7 +26,7 @@ const products = [
   {
     id: 2,
     slug: "wing-zero-custom",
-    categoryId: "gundam-models",
+    categoryId: "model-kits",
     category: "Gundam Wing",
     series: "Endless Waltz",
     grade: "Master Grade Ver. Ka",
@@ -46,7 +46,7 @@ const products = [
   {
     id: 3,
     slug: "barbatos-lupus",
-    categoryId: "gundam-models",
+    categoryId: "model-kits",
     category: "Iron-Blooded Orphans",
     series: "Post Disaster",
     grade: "Full Mechanics",
