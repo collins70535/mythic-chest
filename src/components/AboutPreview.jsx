@@ -15,7 +15,7 @@ export default function AboutPreview() {
             </h2>
             <p className="mt-5 max-w-3xl text-base leading-7 text-zinc-300">
               Mythic Chest is more than a destination for anime figures, model kits,
-              and pop culture collectibles—it’s a welcoming space where young people
+              and pop culture collectibles—it’s a welcoming space where all people
               can be themselves, share their passions, and feel accepted without
               judgment. Through a love of stories, creativity, and community, we
               encourage reading, support local youth clubs, and celebrate what makes
