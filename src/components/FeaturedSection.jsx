@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Link } from "react-router-dom"
 import accessoriesImage from "../assets/featured/accessories.jpg"
 import apparelImage from "../assets/featured/apparel.jpg"
@@ -48,54 +47,46 @@ const featured = [
 ]
 
 function FeaturedCard({ item }) {
-  const [liked, setLiked] = useState(false)
-
   return (
-    <article className="loot-card group relative flex flex-col overflow-hidden rounded-2xl">
-      <Link to={item.href} className="relative block">
+    <article className="loot-card group flex min-w-0 flex-col overflow-hidden rounded-[1.4rem]">
+      <Link to={item.href} className="relative block overflow-hidden bg-black/40">
         <img
           src={item.image}
-          alt={item.category}
-          className="h-44 w-full object-cover"
+          alt={`${item.name} — ${item.category}`}
+          className="h-64 w-full object-cover transition duration-500 group-hover:scale-[1.035] sm:h-72 lg:h-64 xl:h-72"
           loading="lazy"
         />
+        <span className="absolute left-4 top-4 rounded-full border border-amber-300/35 bg-[#0c0615]/90 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.22em] text-amber-200 backdrop-blur">
+          Launch preview
+        </span>
       </Link>
-      <button
-        type="button"
-        aria-label={`Save ${item.name} to favorites`}
-        aria-pressed={liked}
-        onClick={() => setLiked((current) => !current)}
-        className="absolute right-3 top-3 text-white drop-shadow-[0_1px_6px_rgba(0,0,0,0.9)] transition hover:scale-110"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          className="h-6 w-6"
-          fill={liked ? "#f43f5e" : "none"}
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 20.7C6.4 17 3 13.6 3 9.9 3 7.2 5.1 5 7.7 5c1.7 0 3.3.9 4.3 2.4C13 5.9 14.6 5 16.3 5 18.9 5 21 7.2 21 9.9c0 3.7-3.4 7.1-9 10.8Z" />
-        </svg>
-      </button>
 
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col p-5 sm:p-6">
         <Link
           to={item.href}
-          className="flex items-center gap-2 text-base font-extrabold uppercase tracking-wide hover:text-amber-300"
+          className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.15em] text-amber-300 hover:text-amber-200"
         >
           {item.category}
-          <span className="text-amber-400 transition group-hover:translate-x-1">
+          <span aria-hidden="true" className="transition group-hover:translate-x-1">
             →
           </span>
         </Link>
-        <p className="mt-3 flex-1 text-center text-base font-bold leading-snug">
-          {item.name}
-        </p>
-        <p className="mt-2 text-center text-lg font-extrabold text-amber-400">
-          {item.price}
-        </p>
+        <h3 className="mt-4 flex-1 text-xl font-bold leading-snug">
+          <Link to={item.href} className="hover:text-amber-100">
+            {item.name}
+          </Link>
+        </h3>
+        <div className="mt-5 flex items-end justify-between gap-4 border-t border-white/10 pt-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+              Preview price
+            </p>
+            <p className="mt-1 text-xl font-black text-amber-400">{item.price}</p>
+          </div>
+          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">
+            Browse only
+          </span>
+        </div>
       </div>
     </article>
   )
@@ -103,22 +94,30 @@ function FeaturedCard({ item }) {
 
 export default function FeaturedSection() {
   return (
-    <section id="shop" className="scroll-mt-32 px-5 pb-24 md:px-8">
+    <section id="shop" className="scroll-mt-32 px-5 py-20 md:px-8 md:py-24">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-8 flex items-center gap-6">
-          <h2 className="text-3xl font-black uppercase tracking-wide md:text-4xl">
-            Featured Products
-          </h2>
-          <div className="h-0.5 flex-1 bg-gradient-to-r from-amber-400 to-transparent" />
+        <div className="mb-10 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <p className="text-xs font-extrabold uppercase tracking-[0.32em] text-amber-300">
+              Inside the chest
+            </p>
+            <h2 className="mt-3 text-3xl font-black uppercase tracking-tight sm:text-4xl">
+              Featured collection
+            </h2>
+            <p className="mt-3 max-w-2xl leading-7 text-zinc-400">
+              A preview across every corner of Mythic Chest. Product details and
+              displayed prices are preserved for browsing; ordering is not yet open.
+            </p>
+          </div>
           <Link
             to="/collections/model-kits"
-            className="shrink-0 font-extrabold uppercase tracking-wide text-amber-400 hover:text-amber-300"
+            className="inline-flex w-fit items-center gap-2 font-extrabold uppercase tracking-[0.14em] text-amber-300 hover:text-amber-200"
           >
-            View All →
+            Browse model kits <span aria-hidden="true">→</span>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-7 xl:grid-cols-5 xl:gap-8">
           {featured.map((item) => (
             <FeaturedCard key={item.category} item={item} />
           ))}

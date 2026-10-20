@@ -13,7 +13,7 @@ export default function CollectionPage() {
   if (!category) {
     return (
       <main className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
-        <p className="mb-3 text-sm uppercase tracking-[0.3em] text-blue-400">
+        <p className="mb-3 text-sm uppercase tracking-[0.3em] text-amber-300">
           Collection
         </p>
         <h1 className="mb-6 text-4xl font-black md:text-5xl">
@@ -21,7 +21,7 @@ export default function CollectionPage() {
         </h1>
         <Link
           to="/#shop"
-          className="inline-flex rounded-xl bg-blue-500 px-6 py-3 font-semibold hover:bg-blue-400"
+          className="inline-flex rounded-xl bg-amber-400 px-6 py-3 font-semibold text-[#12091f] hover:bg-amber-300"
         >
           Back to Shop
         </Link>
@@ -33,7 +33,7 @@ export default function CollectionPage() {
     <main>
       <section className="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:grid-cols-[1fr_420px] md:px-8 md:py-24">
         <div className="flex flex-col justify-center">
-          <p className="mb-4 text-sm uppercase tracking-[0.3em] text-blue-400">
+          <p className="mb-4 text-sm uppercase tracking-[0.3em] text-amber-300">
             {category.eyebrow}
           </p>
           <h1 className="mb-6 text-4xl font-black md:text-6xl">
@@ -55,7 +55,7 @@ export default function CollectionPage() {
 
       <section className="px-5 pb-24 md:px-8">
         <div className="mx-auto mb-10 max-w-6xl">
-          <p className="mb-3 text-sm uppercase tracking-[0.3em] text-blue-400">
+          <p className="mb-3 text-sm uppercase tracking-[0.3em] text-amber-300">
             Available Stock
           </p>
           <h2 className="text-3xl font-black md:text-4xl">
@@ -66,7 +66,7 @@ export default function CollectionPage() {
         </div>
 
         {collectionProducts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:gap-10">
             {collectionProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -79,7 +79,7 @@ export default function CollectionPage() {
             </p>
             <Link
               to="/#shop"
-              className="mt-6 inline-flex rounded-xl bg-zinc-800 px-6 py-3 font-semibold hover:bg-blue-500"
+              className="mt-6 inline-flex rounded-xl bg-zinc-800 px-6 py-3 font-semibold hover:bg-purple-700"
             >
               View Other Collections
             </Link>

@@ -43,12 +43,24 @@ function isEmbeddedCheckoutEnabled(env) {
   return value === "true" || value === "1"
 }
 
+function isCheckoutEnabled(env) {
+  const value = env.HALL_OF_FAME_CHECKOUT_ENABLED
+  return value === "true" || value === "1"
+}
+
 export async function onRequest({ request, env }) {
   if (request.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed." }), {
       status: 405,
       headers: { "Content-Type": "application/json" },
     })
+  }
+
+  if (!isCheckoutEnabled(env)) {
+    return Response.json(
+      { error: "Hall of Fame 2026 ordering is closed." },
+      { status: 410 },
+    )
   }
 
   if (!env.STRIPE_SECRET_KEY) {

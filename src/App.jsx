@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-route
 
 import CartDrawer from "./components/CartDrawer"
 import Navbar from "./components/Navbar"
+import { COMING_SOON } from "./config/comingSoon"
 import { CartProvider } from "./context/CartContext"
 
 import AboutPage from "./pages/AboutPage"
@@ -29,24 +30,38 @@ function AppContent() {
   return (
     <CartProvider>
       <div className="min-h-screen text-white">
+        <a
+          href="#main-content"
+          className="sr-only fixed left-4 top-4 z-[100] rounded-lg bg-amber-400 px-4 py-3 font-bold text-[#12091f] focus:not-sr-only"
+        >
+          Skip to main content
+        </a>
         <Navbar />
 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
-          <Route path="/collections/:categoryId" element={<CollectionPage />} />
-          <Route path="/custom-apparel" element={<CustomApparelPage />} />
-          <Route path="/custom/:garmentSlug" element={<GarmentDesignerPage />} />
-          <Route
-            path="/custom-tee"
-            element={<Navigate to="/custom-apparel" replace />}
-          />
-          <Route path="/product/:slug" element={<ProductPage />} />
-        </Routes>
+        <div id="main-content">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route
+              path="/checkout"
+              element={COMING_SOON ? <Navigate to="/" replace /> : <CheckoutPage />}
+            />
+            <Route
+              path="/checkout/success"
+              element={COMING_SOON ? <Navigate to="/" replace /> : <CheckoutSuccessPage />}
+            />
+            <Route path="/collections/:categoryId" element={<CollectionPage />} />
+            <Route path="/custom-apparel" element={<CustomApparelPage />} />
+            <Route path="/custom/:garmentSlug" element={<GarmentDesignerPage />} />
+            <Route
+              path="/custom-tee"
+              element={<Navigate to="/custom-apparel" replace />}
+            />
+            <Route path="/product/:slug" element={<ProductPage />} />
+          </Routes>
+        </div>
 
-        <CartDrawer />
+        {!COMING_SOON && <CartDrawer />}
       </div>
     </CartProvider>
   )

@@ -30,8 +30,16 @@ function isEmbeddedCheckoutEnabled() {
   return value === "true" || value === "1"
 }
 
+function isCheckoutEnabled() {
+  const value = process.env.HALL_OF_FAME_CHECKOUT_ENABLED
+  return value === "true" || value === "1"
+}
+
 export default async function handler(request, response) {
   if (request.method !== "POST") return response.status(405).json({ error: "Method not allowed." })
+  if (!isCheckoutEnabled()) {
+    return response.status(410).json({ error: "Hall of Fame 2026 ordering is closed." })
+  }
   if (!process.env.STRIPE_SECRET_KEY) return response.status(503).json({ error: "Stripe is not configured yet." })
 
   try {

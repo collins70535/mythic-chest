@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom"
 import { useCart } from "../context/useCart"
+import { COMING_SOON } from "../config/comingSoon"
 import products from "../data/products"
 
 export default function ProductPage() {
@@ -30,7 +31,7 @@ export default function ProductPage() {
         />
 
         <div>
-          <p className="text-blue-400 uppercase tracking-widest mb-4">
+          <p className="mb-4 uppercase tracking-widest text-amber-300">
             {product.series}
           </p>
 
@@ -61,24 +62,33 @@ export default function ProductPage() {
             <ul className="grid gap-3 text-zinc-300">
               {product.features.map((feature) => (
                 <li key={feature} className="flex gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-300" />
                   <span>{feature}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <p className="text-3xl text-blue-400 font-bold mb-8">
+          <p className="mb-8 text-3xl font-bold text-amber-300">
             {product.price}
           </p>
 
-          <button
-            type="button"
-            className="px-8 py-4 rounded-xl bg-blue-500 hover:bg-blue-400 transition font-semibold"
-            onClick={() => addItem(product)}
-          >
-            Add to Cart
-          </button>
+          {COMING_SOON ? (
+            <div className="rounded-xl border border-amber-300/30 bg-amber-300/10 px-6 py-4 text-amber-100">
+              <p className="font-bold">Browsing preview</p>
+              <p className="mt-1 text-sm text-zinc-300">
+                Ordering is not live yet. This item will be available to shop at launch.
+              </p>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="rounded-xl bg-blue-500 px-8 py-4 font-semibold transition hover:bg-blue-400"
+              onClick={() => addItem(product)}
+            >
+              Add to Cart
+            </button>
+          )}
         </div>
       </div>
     </div>

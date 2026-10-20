@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { useCart } from "../context/useCart"
+import { COMING_SOON } from "../config/comingSoon"
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart()
@@ -22,7 +23,7 @@ export default function ProductCard({ product }) {
           {product.series}
         </p>
 
-        <Link to={`/product/${product.slug}`} className="hover:text-blue-300">
+        <Link to={`/product/${product.slug}`} className="hover:text-amber-200">
           <h3 className="text-2xl font-bold">{product.name}</h3>
         </Link>
 
@@ -35,17 +36,23 @@ export default function ProductCard({ product }) {
           </span>
         </div>
 
-        <p className="text-blue-400 text-xl mt-2">
+        <p className="mt-2 text-xl text-amber-300">
           {product.price}
         </p>
 
-        <button
-          type="button"
-          className="mt-auto w-full rounded-xl bg-zinc-800 py-3 transition hover:bg-blue-500"
-          onClick={() => addItem(product)}
-        >
-          Add to Cart
-        </button>
+        {COMING_SOON ? (
+          <div className="mt-auto w-full rounded-xl border border-amber-300/25 bg-amber-300/10 px-4 py-3 text-center text-sm font-bold uppercase tracking-[0.16em] text-amber-200">
+            Launch preview
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="mt-auto w-full rounded-xl bg-zinc-800 py-3 transition hover:bg-blue-500"
+            onClick={() => addItem(product)}
+          >
+            Add to Cart
+          </button>
+        )}
       </div>
     </article>
   )

@@ -184,35 +184,43 @@ export default function Navbar() {
               <SearchBar />
             </div>
 
-            <button
-              type="button"
-              className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 hover:border-amber-400 hover:text-amber-300"
-              onClick={openCart}
-              aria-label={`Open cart, ${cartCount} items`}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="9" cy="20" r="1.4" />
-                <circle cx="17" cy="20" r="1.4" />
-                <path d="M2 3h3l2.6 12.4a1.5 1.5 0 0 0 1.5 1.1h7.9a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6" />
-              </svg>
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[11px] font-extrabold text-black">
-                {cartCount}
+            {COMING_SOON ? (
+              <span className="hidden rounded-full border border-amber-400/40 bg-amber-400/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-amber-300 sm:inline-flex">
+                Preview
               </span>
-            </button>
+            ) : (
+              <button
+                type="button"
+                className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 hover:border-amber-400 hover:text-amber-300"
+                onClick={openCart}
+                aria-label={`Open cart, ${cartCount} items`}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="9" cy="20" r="1.4" />
+                  <circle cx="17" cy="20" r="1.4" />
+                  <path d="M2 3h3l2.6 12.4a1.5 1.5 0 0 0 1.5 1.1h7.9a1.5 1.5 0 0 0 1.5-1.2L20.5 7H6" />
+                </svg>
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[11px] font-extrabold text-black">
+                  {cartCount}
+                </span>
+              </button>
+            )}
 
             <button
               type="button"
               className="flex h-11 w-11 items-center justify-center rounded-lg border border-white/10 bg-white/5 lg:hidden"
               aria-label="Toggle navigation menu"
               aria-expanded={isMenuOpen}
+              aria-controls="mobile-navigation"
               onClick={() => setIsMenuOpen((current) => !current)}
             >
               <span className="flex w-5 flex-col gap-1.5">
@@ -225,7 +233,7 @@ export default function Navbar() {
         </div>
 
         {isMenuOpen && (
-          <div className="mt-4 grid gap-3 border-t border-white/10 pt-4 lg:hidden">
+          <div id="mobile-navigation" className="mt-4 grid gap-3 border-t border-white/10 pt-4 lg:hidden">
             <SearchBar onNavigate={() => setIsMenuOpen(false)} />
             <div className="grid gap-2 text-sm font-semibold uppercase tracking-wider">
               {navLinks.map((link) =>

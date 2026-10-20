@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { garmentList } from "../config/garments"
+import { COMING_SOON } from "../config/comingSoon"
 
 export default function CustomApparelPage() {
   return (
@@ -8,8 +9,8 @@ export default function CustomApparelPage() {
         Design Your Own Apparel
       </h1>
       <p className="mt-3 max-w-2xl text-white/70">
-        Pick a garment, upload your artwork or describe what you want, and
-        we&apos;ll print it with DTF. Custom orders have a 10-item minimum.
+        Preview garments, artwork placement, colors, and sizes for a future
+        custom order. Ordering is not open during the launch preview.
       </p>
       <div className="mt-4 inline-flex flex-wrap items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/70">
         <span className="text-blue-400">&#10003;</span> DTF printing
@@ -55,7 +56,7 @@ export default function CustomApparelPage() {
                     to={`/custom/${garment.slug}`}
                     className="rounded-xl bg-blue-500 px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-blue-400"
                   >
-                    Start designing
+                    {COMING_SOON ? "Preview designer" : "Start designing"}
                   </Link>
                 </div>
               ) : (

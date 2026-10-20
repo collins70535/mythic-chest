@@ -3,7 +3,11 @@ import test from "node:test"
 
 import { onRequest } from "../functions/api/create-hall-of-fame-checkout-session.js"
 
-const ENV = { STRIPE_SECRET_KEY: "sk_test_placeholder", HOF_EMBEDDED_CHECKOUT: "false" }
+const ENV = {
+  STRIPE_SECRET_KEY: "sk_test_placeholder",
+  HALL_OF_FAME_CHECKOUT_ENABLED: "true",
+  HOF_EMBEDDED_CHECKOUT: "false",
+}
 
 function postRequest(payload) {
   return new Request("https://example.com/api/create-hall-of-fame-checkout-session", {
@@ -41,8 +45,27 @@ test("rejects non-POST methods with 405", async () => {
   assert.equal(response.status, 405)
 })
 
+test("refuses checkout while Hall of Fame ordering is closed", async () => {
+  const stripe = mockStripe({ url: "https://checkout.stripe.com/test" })
+
+  try {
+    const response = await onRequest({
+      request: postRequest(VALID_PAYLOAD),
+      env: { STRIPE_SECRET_KEY: "sk_test_placeholder" },
+    })
+
+    assert.equal(response.status, 410)
+    assert.equal(stripe.calls.length, 0)
+  } finally {
+    stripe.restore()
+  }
+})
+
 test("returns 503 when Stripe is not configured", async () => {
-  const response = await onRequest({ request: postRequest(VALID_PAYLOAD), env: {} })
+  const response = await onRequest({
+    request: postRequest(VALID_PAYLOAD),
+    env: { HALL_OF_FAME_CHECKOUT_ENABLED: "true" },
+  })
 
   assert.equal(response.status, 503)
 })

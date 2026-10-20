@@ -2,6 +2,7 @@ import { useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { useCart } from "../context/useCart"
 import { BACK_PRINT_PRICE, GARMENTS } from "../config/garments"
+import { COMING_SOON } from "../config/comingSoon"
 
 const SIDES = ["front", "back"]
 
@@ -83,7 +84,7 @@ export default function GarmentDesignerPage() {
   )
   const hasArtwork =
     hasFrontArt || hasBackArt || designDescription.trim().length > 0
-  const canAdd = hasArtwork && totalQty >= minQty
+  const canAdd = !COMING_SOON && hasArtwork && totalQty >= minQty
 
   const updateSide = (side, patch) =>
     setArt((current) => ({
@@ -510,7 +511,9 @@ export default function GarmentDesignerPage() {
                 ))}
               </ul>
               <p className="mt-2 text-xs text-white/50">
-                Shipping calculated at checkout.
+                {COMING_SOON
+                  ? "Preview pricing only. Ordering and shipping quotes open at launch."
+                  : "Shipping calculated at checkout."}
               </p>
               <label
                 className="mt-4 block text-sm text-white/70"
@@ -533,7 +536,7 @@ export default function GarmentDesignerPage() {
                 onClick={handleAddToCart}
                 className="mt-4 w-full rounded-xl bg-blue-500 px-6 py-3 font-bold uppercase tracking-wider text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {addLabel}
+                {COMING_SOON ? "Ordering opens at launch" : addLabel}
               </button>
             </div>
           </section>
