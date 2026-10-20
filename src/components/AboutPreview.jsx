@@ -14,10 +14,12 @@ export default function AboutPreview() {
               A veteran-owned home for collectors, builders, and legendary shelves.
             </h2>
             <p className="mt-5 max-w-3xl text-base leading-7 text-zinc-300">
-              Mythic Chest brings together model kits, figures, comics,
-              accessories, and apparel with a collector-first eye. We are
-              building the kind of shop we want to browse: focused, honest,
-              and made for people who care about the story behind every piece.
+              Mythic Chest is more than a destination for anime figures, model kits,
+              and pop culture collectibles—it’s a welcoming space where young people
+              can be themselves, share their passions, and feel accepted without
+              judgment. Through a love of stories, creativity, and community, we
+              encourage reading, support local youth clubs, and celebrate what makes
+              everyone unique.
             </p>
           </div>
           <Link
