@@ -36,13 +36,16 @@ export default function ProductCard({ product }) {
           </span>
         </div>
 
-        <p className="mt-2 text-xl text-amber-300">
+        <p className={`mt-2 text-xl ${COMING_SOON ? "text-zinc-400 line-through" : "text-amber-300"}`}>
           {product.price}
         </p>
 
         {COMING_SOON ? (
           <div className="mt-auto w-full rounded-xl border border-amber-300/25 bg-amber-300/10 px-4 py-3 text-center text-sm font-bold uppercase tracking-[0.16em] text-amber-200">
-            Launch preview
+            Placeholder · Launch preview
+            <span className="mt-2 block text-xs font-normal normal-case tracking-normal">
+              Displayed price is not accurate. Final pricing to come.
+            </span>
           </div>
         ) : (
           <button
