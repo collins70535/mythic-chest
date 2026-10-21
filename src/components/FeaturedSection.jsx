@@ -20,7 +20,7 @@ const featured = [
     category: "Figures",
     href: "/collections/figures",
     image: figuresImage,
-    name: "Megami Device - Sora SKY",
+    name: "Naruto Shippuden Card",
     price: "$89.99",
   },
   {
@@ -57,7 +57,7 @@ function FeaturedCard({ item }) {
           loading="lazy"
         />
         <span className="absolute left-4 top-4 rounded-full border border-amber-300/35 bg-[#0c0615]/90 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.22em] text-amber-200 backdrop-blur">
-          Placeholder · Launch preview
+          Launch preview
         </span>
       </Link>
 
@@ -79,10 +79,9 @@ function FeaturedCard({ item }) {
         <div className="mt-5 flex items-end justify-between gap-4 border-t border-white/10 pt-4">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">
-              Placeholder price
+              Preview price
             </p>
-            <p className="mt-1 text-xl font-black text-zinc-400 line-through">{item.price}</p>
-            <p className="mt-1 text-xs font-semibold text-amber-200">Not accurate · Final pricing to come</p>
+            <p className="mt-1 text-xl font-black text-amber-400">{item.price}</p>
           </div>
           <span className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">
             Browse only
@@ -106,9 +105,8 @@ export default function FeaturedSection() {
               Featured collection
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-zinc-400">
-              These launch preview cards are placeholders. Products and prices are
-              examples only, and displayed prices are not accurate. Final product
-              details and pricing will be confirmed at launch; ordering is not yet open.
+              A preview across every corner of Mythic Chest. Product details and
+              displayed prices are preserved for browsing; ordering is not yet open.
             </p>
           </div>
           <Link
