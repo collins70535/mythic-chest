@@ -2,8 +2,8 @@ import { Link } from "react-router-dom"
 import accessoriesImage from "../assets/featured/accessories.jpg"
 import apparelImage from "../assets/featured/apparel.jpg"
 import comicsImage from "../assets/featured/comics.jpg"
-import figuresImage from "../assets/featured/figures.jpg"
 import modelKitsImage from "../assets/featured/model-kits.jpg"
+import narutoShippudenImage from "../assets/featured/naruto-shippuden.jpg"
 import products from "../data/products"
 
 const featuredProduct = products.find((product) => product.slug === "rx-78-gundam")
@@ -19,7 +19,7 @@ const featured = [
   {
     category: "Figures",
     href: "/collections/figures",
-    image: figuresImage,
+    image: narutoShippudenImage,
     name: "Naruto Shippuden Card",
     price: "$89.99",
   },
