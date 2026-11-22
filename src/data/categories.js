@@ -16,9 +16,9 @@ const categories = [
   {
     id: "figures",
     name: "Figures",
-    eyebrow: "Snap-build figures / display collectibles",
+    eyebrow: "Funko Pop! / anime figures / collectibles",
     description:
-      "Display-ready figures and collectible kits with accessories and collector packaging.",
+      "Funko Pop! vinyl, anime figures, and display collectibles with collector packaging — the fun stuff, priced so you can actually build a collection.",
     image: blokkeesChampionImage,
     href: "/collections/figures",
   },
@@ -34,9 +34,9 @@ const categories = [
   {
     id: "accessories",
     name: "Accessories",
-    eyebrow: "Action bases / stands / display gear",
+    eyebrow: "Pins / playing cards / display gear",
     description:
-      "Modular action bases, support arms, posing adapters, and display gear for cleaner setups.",
+      "Enamel pins, playing cards, action bases, and display gear — the small stuff that finishes a shelf.",
     image: actionBasesImage,
     href: "/collections/accessories",
   },
