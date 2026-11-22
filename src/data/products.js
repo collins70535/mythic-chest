@@ -1,6 +1,3 @@
-import barbatosLupusImage from "../assets/products/barbatos-lupus.png"
-import rx78GundamImage from "../assets/products/rx-78-gundam.png"
-import wingZeroCustomImage from "../assets/products/wing-zero-custom.png"
 import PopPinDcCyborgImage from "../assets/products/pop-pin-dc-cyborg.webp"
 import PopPinJudgeDoomImage from "../assets/products/pop-pin-judge-doom.webp"
 import PopPinSmartyWeaselImage from "../assets/products/pop-pin-smarty-weasel.webp"
@@ -41,75 +38,13 @@ import MegoMinixSasukeImage from "../assets/products/mego-minix-sasuke.webp"
 
 const products = [
   {
-    id: 1,
-    slug: "rx-78-gundam",
-    categoryId: "model-kits",
-    category: "Universal Century",
-    series: "Mobile Suit Gundam",
-    grade: "Master Grade",
-    name: "RX-78 Gundam",
-    price: "$89.99",
-    stock: "In Stock",
-    placeholderPrice: true,
-    description:
-      "The legendary RX-78 Gundam featuring awesome articulation, iconic panel detail, and a display-ready silhouette for Universal Century collectors.",
-    features: [
-      "Precision-molded armor with sharp panel definition",
-      "Flexible inner frame for dynamic posing",
-      "Includes beam rifle, shield, and display accessories",
-    ],
-    image: rx78GundamImage,
-  },
-
-  {
-    id: 2,
-    slug: "wing-zero-custom",
-    categoryId: "model-kits",
-    category: "Gundam Wing",
-    series: "Endless Waltz",
-    grade: "Master Grade Ver. Ka",
-    name: "Wing Zero Custom",
-    price: "$119.99",
-    stock: "Low Stock",
-    placeholderPrice: true,
-    description:
-      "High-detail Endless Waltz variant with an angel-wing configuration, dramatic proportions, and shelf presence built for centerpiece displays.",
-    features: [
-      "Layered wing binders with wide display range",
-      "Twin buster rifle loadout",
-      "Awesome decal sheet for Ver. Ka styling",
-    ],
-    image: wingZeroCustomImage,
-  },
-
-  {
-    id: 3,
-    slug: "barbatos-lupus",
-    categoryId: "model-kits",
-    category: "Iron-Blooded Orphans",
-    series: "Post Disaster",
-    grade: "Full Mechanics",
-    name: "Barbatos Lupus",
-    price: "$99.99",
-    stock: "In Stock",
-    placeholderPrice: true,
-    description:
-      "Aggressive close-combat mobile suit with enhanced armor, heavy melee presence, and the raw mechanical character of Iron-Blooded Orphans.",
-    features: [
-      "Extended limb proportions for action-heavy posing",
-      "Large mace weapon system included",
-      "Mechanical frame details visible through armor breaks",
-    ],
-    image: barbatosLupusImage,
-  },
-  {
     id: 4,
     slug: "pop-pin-dc-cyborg",
     categoryId: "accessories",
     category: "Accessories",
     series: "DC Comics",
     grade: "Funko Pop! Pin",
-    name: "Cyborg (Large Enamel Pin)",
+    name: "Cyborg (Enamel Pin)",
     price: "$14.99",
     stock: "Arriving for Dec 5",
     description:
@@ -265,8 +200,8 @@ const products = [
   {
     id: 12,
     slug: "pop-aot-connie-springer",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Attack on Titan",
     grade: "Funko Pop!",
     name: "Connie Springer",
@@ -285,8 +220,8 @@ const products = [
   {
     id: 13,
     slug: "pop-bleach-ishida-uryu",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Bleach",
     grade: "Funko Pop!",
     name: "Ishida Uryu",
@@ -305,8 +240,8 @@ const products = [
   {
     id: 14,
     slug: "pop-bleach-kon",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Bleach",
     grade: "Funko Pop!",
     name: "Kon",
@@ -345,8 +280,8 @@ const products = [
   {
     id: 16,
     slug: "pop-jjk-jogo",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Jujutsu Kaisen",
     grade: "Funko Pop!",
     name: "Jogo",
@@ -365,8 +300,8 @@ const products = [
   {
     id: 17,
     slug: "pop-jjk-nobara",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Jujutsu Kaisen",
     grade: "Funko Pop!",
     name: "Nobara Kugisaki",
@@ -385,8 +320,8 @@ const products = [
   {
     id: 18,
     slug: "pop-jjk-sukuna-kimono",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Jujutsu Kaisen",
     grade: "Funko Pop!",
     name: "Sukuna (Kimono)",
@@ -405,8 +340,8 @@ const products = [
   {
     id: 19,
     slug: "pop-jjk-gojo",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Jujutsu Kaisen",
     grade: "Funko Pop!",
     name: "Satoru Gojo",
@@ -425,8 +360,8 @@ const products = [
   {
     id: 20,
     slug: "pop-marvel-holiday-deadpool",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Marvel",
     grade: "Funko Pop!",
     name: "Holiday Deadpool",
@@ -445,8 +380,8 @@ const products = [
   {
     id: 21,
     slug: "pop-marvel-holiday-she-hulk-elf",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Marvel",
     grade: "Funko Pop!",
     name: "Holiday She-Hulk (Elf)",
@@ -485,8 +420,8 @@ const products = [
   {
     id: 23,
     slug: "pop-premium-mha-deku",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "My Hero Academia",
     grade: "Funko Pop! Premium",
     name: "Deku — One for All Quirk",
@@ -505,8 +440,8 @@ const products = [
   {
     id: 24,
     slug: "pop-mha-todoroki-full-power",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "My Hero Academia",
     grade: "Funko Pop!",
     name: "Todoroki (Full Power)",
@@ -545,8 +480,8 @@ const products = [
   {
     id: 26,
     slug: "pop-one-piece-armored-luffy",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "One Piece",
     grade: "Funko Pop!",
     name: "Armored Luffy (Exclusive)",
@@ -565,8 +500,8 @@ const products = [
   {
     id: 27,
     slug: "pop-one-piece-east-blue-sanji",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "One Piece",
     grade: "Funko Pop!",
     name: "East Blue Sanji",
@@ -585,8 +520,8 @@ const products = [
   {
     id: 28,
     slug: "pop-one-piece-east-blue-zoro",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "One Piece",
     grade: "Funko Pop!",
     name: "East Blue Zoro",
@@ -605,8 +540,8 @@ const products = [
   {
     id: 29,
     slug: "pop-one-piece-chopper-egghead",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "One Piece",
     grade: "Funko Pop!",
     name: "Chopper (Egghead)",
@@ -645,8 +580,8 @@ const products = [
   {
     id: 31,
     slug: "pop-pokemon-pikachu-waving",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Pokemon",
     grade: "Funko Pop!",
     name: "Pikachu (Waving)",
@@ -665,8 +600,8 @@ const products = [
   {
     id: 32,
     slug: "pop-pokemon-lucario",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Pokemon",
     grade: "Funko Pop!",
     name: "Lucario",
@@ -685,8 +620,8 @@ const products = [
   {
     id: 33,
     slug: "pop-demon-slayer-muichiro-chase",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "funko-pops",
+    category: "Funko Pop!",
     series: "Demon Slayer",
     grade: "Funko Pop! Chase",
     name: "Muichiro Tokito — Chase Variant",
@@ -745,8 +680,8 @@ const products = [
   {
     id: 36,
     slug: "blokees-transformers-gv05",
-    categoryId: "figures",
-    category: "Figures",
+    categoryId: "model-kits",
+    category: "Model Kits",
     series: "Transformers",
     grade: "Blokees Blind Box",
     name: "Transformers Galaxy Version 05 — Single Blind Box",
