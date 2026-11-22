@@ -31,26 +31,16 @@ export default function CollectionPage() {
 
   return (
     <main>
-      <section className="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:grid-cols-[1fr_420px] md:px-8 md:py-24">
-        <div className="flex flex-col justify-center">
-          <p className="mb-4 text-sm uppercase tracking-[0.3em] text-amber-300">
-            {category.eyebrow}
-          </p>
-          <h1 className="mb-6 text-4xl font-black md:text-6xl">
-            {category.name}
-          </h1>
-          <p className="max-w-2xl text-lg leading-8 text-zinc-400">
-            {category.description}
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-white/10 bg-black p-4">
-          <img
-            src={category.image}
-            alt={category.name}
-            className="aspect-square w-full object-contain"
-          />
-        </div>
+      <section className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+        <p className="mb-4 text-sm uppercase tracking-[0.3em] text-amber-300">
+          {category.eyebrow}
+        </p>
+        <h1 className="mb-6 text-4xl font-black md:text-6xl">
+          {category.name}
+        </h1>
+        <p className="max-w-2xl text-lg leading-8 text-zinc-400">
+          {category.description}
+        </p>
       </section>
 
       <section className="px-5 pb-24 md:px-8">
