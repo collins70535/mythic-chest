@@ -6,6 +6,7 @@ import { COMING_SOON } from "./config/comingSoon"
 import { CartProvider } from "./context/CartContext"
 
 import AboutPage from "./pages/AboutPage"
+import AdminPage from "./pages/AdminPage"
 import CheckoutPage from "./pages/CheckoutPage"
 import CheckoutSuccessPage from "./pages/CheckoutSuccessPage"
 import CollectionPage from "./pages/CollectionPage"
@@ -18,6 +19,10 @@ import HallOfFamePayPage from "./pages/HallOfFamePayPage"
 
 function AppContent() {
   const location = useLocation()
+
+  if (location.pathname === "/admin" || location.pathname.startsWith("/admin/")) {
+    return <AdminPage />
+  }
 
   if (location.pathname === "/hall-of-fame-2026/pay") {
     return <HallOfFamePayPage />
