@@ -68,14 +68,14 @@ export default function CartDrawer() {
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="h-24 w-22 rounded-lg object-cover"
+                        className="h-24 w-22 rounded-lg bg-black object-contain"
                       />
                     ) : (
                       <Link to={`/product/${item.slug}`} onClick={closeCart}>
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="h-24 w-22 rounded-lg object-cover"
+                          className="h-24 w-22 rounded-lg bg-black object-contain"
                         />
                       </Link>
                     )}

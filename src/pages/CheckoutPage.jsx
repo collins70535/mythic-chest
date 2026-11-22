@@ -95,7 +95,7 @@ export default function CheckoutPage() {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="h-20 w-18 rounded-lg object-cover"
+                    className="h-20 w-18 rounded-lg bg-black object-contain"
                   />
                   <div>
                     <div className="flex justify-between gap-3">

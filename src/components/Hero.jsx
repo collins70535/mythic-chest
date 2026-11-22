@@ -1,5 +1,3 @@
-import heroChest from "../assets/hero-chest.webp"
-
 export default function Hero() {
   return (
     <section className="relative isolate overflow-hidden border-b border-purple-400/10">
@@ -26,8 +24,8 @@ export default function Hero() {
         }}
       />
 
-      <div className="relative mx-auto grid min-h-[620px] max-w-7xl items-center gap-10 px-5 py-14 md:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16 lg:py-20">
-        <div className="order-2 text-center lg:order-1 lg:text-left">
+      <div className="relative mx-auto flex min-h-[440px] max-w-7xl items-center px-5 py-14 md:px-8 lg:py-20">
+        <div className="max-w-3xl text-left">
           <p className="mb-5 text-xs font-extrabold uppercase tracking-[0.34em] text-amber-300 sm:text-sm">
             Curated for the display case
           </p>
@@ -37,11 +35,11 @@ export default function Hero() {
               Your Legend.
             </span>
           </h1>
-          <p className="mx-auto mt-7 max-w-xl text-base leading-7 text-zinc-300 sm:text-lg sm:leading-8 lg:mx-0">
+          <p className="mt-7 max-w-xl text-base leading-7 text-zinc-300 sm:text-lg sm:leading-8">
             Explore model kits, figures, comics, accessories, and custom apparel
             selected for collectors who want every shelf to tell a story.
           </p>
-          <div className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
+          <div className="mt-9 flex flex-wrap gap-3">
             <a
               href="#shop"
               className="inline-flex min-h-12 items-center justify-center rounded-full bg-amber-400 px-7 py-3 font-extrabold text-[#12091f] transition hover:bg-amber-300"
@@ -58,19 +56,6 @@ export default function Hero() {
           <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
             Browse the launch preview • Ordering opens later
           </p>
-        </div>
-
-        <div className="order-1 lg:order-2">
-          <div className="showroom-case relative mx-auto max-w-[660px] overflow-hidden rounded-[2rem] border border-amber-300/25 bg-black/35 p-3 shadow-[0_35px_100px_rgba(37,8,68,0.7)] sm:p-5">
-            <div className="absolute inset-x-[12%] top-0 h-px bg-gradient-to-r from-transparent via-amber-200/90 to-transparent" />
-            <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.09),transparent_24%,transparent_70%,rgba(168,85,247,0.08))]" />
-            <img
-              src={heroChest}
-              alt="An open Mythic Chest filled with purple crystals and gold coins"
-              className="relative aspect-[6/5] w-full rounded-[1.4rem] object-contain [mask-image:radial-gradient(ellipse_78%_78%_at_50%_48%,black_62%,transparent_100%)]"
-            />
-            <div className="absolute inset-x-8 bottom-4 h-px bg-gradient-to-r from-transparent via-purple-300/60 to-transparent" />
-          </div>
         </div>
       </div>
     </section>

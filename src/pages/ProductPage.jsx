@@ -24,11 +24,13 @@ export default function ProductPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
       <div className="grid md:grid-cols-2 gap-12 items-start">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="aspect-square w-full rounded-2xl object-cover"
-        />
+        <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl bg-black p-6">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="h-full w-full object-contain"
+          />
+        </div>
 
         <div>
           <p className="mb-4 uppercase tracking-widest text-amber-300">
