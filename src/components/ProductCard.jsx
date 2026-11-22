@@ -42,18 +42,12 @@ export default function ProductCard({ product }) {
 
         {COMING_SOON ? (
           product.placeholderPrice ? (
-            <div className="mt-auto w-full rounded-xl border border-amber-300/25 bg-amber-300/10 px-4 py-3 text-center text-sm font-bold uppercase tracking-[0.16em] text-amber-200">
-              Placeholder · Launch preview
-              <span className="mt-2 block text-xs font-normal normal-case tracking-normal">
-                Displayed price is not accurate. Final pricing to come.
-              </span>
+            <div className="mt-auto w-full rounded-full border border-amber-300/25 bg-amber-300/10 px-4 py-2 text-center text-xs font-bold uppercase tracking-[0.16em] text-amber-200">
+              Placeholder · Final pricing to come
             </div>
           ) : (
-            <div className="mt-auto w-full rounded-xl border border-amber-300/25 bg-amber-300/10 px-4 py-3 text-center text-sm font-bold uppercase tracking-[0.16em] text-amber-200">
-              Coming soon · Ordering opens at launch
-              <span className="mt-2 block text-xs font-normal normal-case tracking-normal">
-                First available at the Hometown Christmas Market — Dec 5, Cleveland Civic Center.
-              </span>
+            <div className="mt-auto w-full rounded-full border border-amber-300/25 bg-amber-300/10 px-4 py-2 text-center text-xs font-bold uppercase tracking-[0.16em] text-amber-200">
+              Coming soon · Arriving Dec 5
             </div>
           )
         ) : (

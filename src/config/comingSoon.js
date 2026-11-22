@@ -5,4 +5,4 @@ export const COMING_SOON = true
 export const HALL_OF_FAME_CHECKOUT_ENABLED = false
 
 export const COMING_SOON_BANNER =
-  "Coming Soon - browsing only. Orders and checkout are not live yet."
+  "Browse now — first available Dec 5 at the Hometown Christmas Market · Online ordering isn't open yet"

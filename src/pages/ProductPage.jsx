@@ -76,11 +76,8 @@ export default function ProductPage() {
           </p>
 
           {COMING_SOON ? (
-            <div className="rounded-xl border border-amber-300/30 bg-amber-300/10 px-6 py-4 text-amber-100">
-              <p className="font-bold">Browsing preview</p>
-              <p className="mt-1 text-sm text-zinc-300">
-                Ordering is not live yet. This item will be available to shop at launch.
-              </p>
+            <div className="rounded-full border border-amber-300/30 bg-amber-300/10 px-6 py-3 text-center text-sm font-bold uppercase tracking-[0.16em] text-amber-200">
+              Coming soon · Arriving Dec 5
             </div>
           ) : (
             <button

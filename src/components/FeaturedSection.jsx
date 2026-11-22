@@ -28,10 +28,8 @@ export default function FeaturedSection() {
               Newest arrivals
             </h2>
             <p className="mt-3 max-w-2xl leading-7 text-zinc-400">
-              The latest additions to the chest — real stock, real prices,
-              arriving for Dec 5. First available at the Hometown Christmas
-              Market at the Cleveland Civic Center; online ordering opens at
-              launch.
+              The latest additions to the chest — real stock at real prices,
+              arriving for Dec 5.
             </p>
           </div>
           <Link
@@ -53,19 +51,19 @@ export default function FeaturedSection() {
             to="/collections/figures"
             className="inline-flex rounded-xl bg-amber-400 px-6 py-3 font-semibold text-[#12091f] hover:bg-amber-300"
           >
-            Shop Figures
+            Browse Figures
           </Link>
           <Link
             to="/collections/accessories"
             className="inline-flex rounded-xl bg-zinc-800 px-6 py-3 font-semibold hover:bg-purple-700"
           >
-            Shop Accessories
+            Browse Accessories
           </Link>
           <Link
             to="/collections/model-kits"
             className="inline-flex rounded-xl bg-zinc-800 px-6 py-3 font-semibold hover:bg-purple-700"
           >
-            Shop Model Kits
+            Browse Model Kits
           </Link>
         </div>
       </div>

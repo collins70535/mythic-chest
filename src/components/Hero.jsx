@@ -1,3 +1,59 @@
+import piccoloImage from "../assets/products/ichibansho-piccolo.jpg"
+import muichiroImage from "../assets/products/pop-demon-slayer-muichiro-chase.jpg"
+import gojoImage from "../assets/products/pop-jjk-gojo.jpg"
+import allMightImage from "../assets/products/anime-heroes-all-might.webp"
+import dekuImage from "../assets/products/pop-premium-mha-deku.webp"
+import pikachuImage from "../assets/products/pop-pokemon-pikachu-waving.webp"
+import lucarioImage from "../assets/products/pop-pokemon-lucario.png"
+import aceImage from "../assets/products/abystyle-sfc-one-piece-ace.webp"
+
+const shelves = [
+  [
+    { src: piccoloImage, alt: "Piccolo Ichibansho figure" },
+    { src: muichiroImage, alt: "Muichiro Tokito Chase Funko Pop!" },
+  ],
+  [
+    { src: gojoImage, alt: "Satoru Gojo Funko Pop!" },
+    { src: allMightImage, alt: "All Might Anime Heroes figure" },
+    { src: dekuImage, alt: "Deku Funko Pop! Premium" },
+  ],
+  [
+    { src: pikachuImage, alt: "Pikachu Funko Pop!" },
+    { src: lucarioImage, alt: "Lucario Funko Pop!" },
+    { src: aceImage, alt: "Ace ABYstyle figure" },
+  ],
+]
+
+function DisplayCase() {
+  return (
+    <div className="relative mx-auto w-full max-w-[560px] overflow-hidden rounded-[2rem] border border-amber-300/25 bg-black/45 p-5 shadow-[0_35px_100px_rgba(37,8,68,0.7)] sm:p-7">
+      <div className="absolute inset-x-[12%] top-0 h-px bg-gradient-to-r from-transparent via-amber-200/90 to-transparent" />
+      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.07),transparent_24%,transparent_70%,rgba(168,85,247,0.08))]" />
+      <p className="relative mb-5 text-center text-[10px] font-extrabold uppercase tracking-[0.3em] text-amber-200/90">
+        Inside the chest · Arriving Dec 5
+      </p>
+      <div className="relative grid gap-5">
+        {shelves.map((shelf, index) => (
+          <div
+            key={index}
+            className="flex items-end justify-center gap-5 border-b border-amber-200/20 pb-4 last:border-b-0 last:pb-0"
+          >
+            {shelf.map((item) => (
+              <img
+                key={item.alt}
+                src={item.src}
+                alt={item.alt}
+                className="h-24 w-auto max-w-[30%] object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.55)] sm:h-28"
+                loading="lazy"
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function Hero() {
   return (
     <section className="relative isolate overflow-hidden border-b border-purple-400/10">
@@ -24,8 +80,8 @@ export default function Hero() {
         }}
       />
 
-      <div className="relative mx-auto flex min-h-[440px] max-w-7xl items-center px-5 py-14 md:px-8 lg:py-20">
-        <div className="max-w-3xl text-left">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-14 md:px-8 lg:grid-cols-2 lg:py-20">
+        <div className="text-left">
           <p className="mb-5 text-xs font-extrabold uppercase tracking-[0.34em] text-amber-300 sm:text-sm">
             Curated for the display case
           </p>
@@ -54,9 +110,11 @@ export default function Hero() {
             </a>
           </div>
           <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
-            Browse the launch preview • Ordering opens later
+            Veteran-owned · Cleveland, Texas
           </p>
         </div>
+
+        <DisplayCase />
       </div>
     </section>
   )

@@ -7,7 +7,7 @@ import categories from "../data/categories"
 import products from "../data/products"
 
 const navLinks = [
-  { label: "Shop", href: "/#shop", match: (path) => path === "/" },
+  { label: COMING_SOON ? "Browse" : "Shop", href: "/#shop", match: (path) => path === "/" },
   ...categories.map((category) => ({
     label: category.name,
     href: category.href,

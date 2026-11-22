@@ -536,7 +536,7 @@ export default function GarmentDesignerPage() {
                 onClick={handleAddToCart}
                 className="mt-4 w-full rounded-xl bg-blue-500 px-6 py-3 font-bold uppercase tracking-wider text-white transition hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {COMING_SOON ? "Ordering opens at launch" : addLabel}
+                {COMING_SOON ? "Coming soon" : addLabel}
               </button>
             </div>
           </section>
