@@ -6,16 +6,24 @@ function Spotlight() {
     <div className="relative mx-auto w-full max-w-[560px] overflow-hidden rounded-[2rem] border border-amber-300/25 bg-black/45 p-5 shadow-[0_35px_100px_rgba(37,8,68,0.7)] sm:p-7">
       <div className="absolute inset-x-[12%] top-0 h-px bg-gradient-to-r from-transparent via-amber-200/90 to-transparent" />
       <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.07),transparent_24%,transparent_70%,rgba(168,85,247,0.08))]" />
-      <p className="relative mb-5 text-center text-[10px] font-extrabold uppercase tracking-[0.3em] text-amber-200/90">
+      <p className="relative mb-5 text-center text-sm font-black uppercase tracking-[0.22em] text-amber-200 sm:text-base">
         Inside the Chest · Item Spotlight
       </p>
       <div className="relative flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-        <div className="aspect-square w-44 shrink-0 overflow-hidden rounded-2xl bg-black ring-1 ring-white/10 sm:w-48">
-          <img
-            src={allMightImage}
-            alt="All Might Anime Heroes figure"
-            className="h-full w-full object-contain"
-          />
+        <div className="flex shrink-0 flex-col items-center gap-3">
+          <div className="aspect-square w-44 overflow-hidden rounded-2xl bg-black ring-1 ring-white/10 sm:w-48">
+            <img
+              src={allMightImage}
+              alt="All Might Anime Heroes figure"
+              className="h-full w-full object-contain"
+            />
+          </div>
+          <p className="flex flex-wrap items-center justify-center gap-3">
+            <span className="text-xl font-extrabold text-amber-300">$29.99</span>
+            <span className="rounded-full border border-amber-300/40 bg-amber-300/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-amber-200">
+              Arriving Dec 5
+            </span>
+          </p>
         </div>
         <div className="min-w-0 text-center sm:text-left">
           <h2 className="text-3xl font-black tracking-tight text-white">
@@ -23,12 +31,6 @@ function Spotlight() {
           </h2>
           <p className="mt-1 text-xs font-bold uppercase tracking-[0.18em] text-purple-300">
             Anime Heroes · My Hero Academia
-          </p>
-          <p className="mt-3 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-            <span className="text-xl font-extrabold text-amber-300">$29.99</span>
-            <span className="rounded-full border border-amber-300/40 bg-amber-300/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-amber-200">
-              Arriving Dec 5
-            </span>
           </p>
           <p className="mt-4 text-sm leading-6 text-zinc-300">
             Born Toshinori Yagi, All Might was once Quirkless. Nana Shimura
