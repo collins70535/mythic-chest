@@ -34,11 +34,11 @@ function Spotlight() {
           </p>
           <p className="mt-4 text-sm leading-6 text-zinc-300">
             Born Toshinori Yagi, All Might was once Quirkless. Nana Shimura
-            passed her Quirk, One For All, to him because she believed in his
-            dream of becoming a hero who could inspire hope. The power had been
-            passed down through generations, growing stronger with each
-            successor—and Toshinori carried it forward to become the Symbol of
-            Peace. Plus Ultra!
+            passed her Quirk, One For All, to him. At first, she refused to
+            train him—but his belief that the world needed a Symbol of Peace
+            changed her mind. The power had been passed down through
+            generations, growing stronger with each successor—and Toshinori
+            carried it forward to become the Symbol of Peace. Plus Ultra!
           </p>
           <Link
             to="/product/anime-heroes-all-might"
