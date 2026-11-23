@@ -1,54 +1,50 @@
-import piccoloImage from "../assets/products/ichibansho-piccolo.jpg"
-import muichiroImage from "../assets/products/pop-demon-slayer-muichiro-chase.jpg"
-import gojoImage from "../assets/products/pop-jjk-gojo.jpg"
+import { Link } from "react-router-dom"
 import allMightImage from "../assets/products/anime-heroes-all-might.webp"
-import dekuImage from "../assets/products/pop-premium-mha-deku.webp"
-import pikachuImage from "../assets/products/pop-pokemon-pikachu-waving.webp"
-import lucarioImage from "../assets/products/pop-pokemon-lucario.png"
-import aceImage from "../assets/products/abystyle-sfc-one-piece-ace.webp"
 
-const shelves = [
-  [
-    { src: piccoloImage, alt: "Piccolo Ichibansho figure" },
-    { src: muichiroImage, alt: "Muichiro Tokito Chase Funko Pop!" },
-  ],
-  [
-    { src: gojoImage, alt: "Satoru Gojo Funko Pop!" },
-    { src: allMightImage, alt: "All Might Anime Heroes figure" },
-    { src: dekuImage, alt: "Deku Funko Pop! Premium" },
-  ],
-  [
-    { src: pikachuImage, alt: "Pikachu Funko Pop!" },
-    { src: lucarioImage, alt: "Lucario Funko Pop!" },
-    { src: aceImage, alt: "Ace ABYstyle figure" },
-  ],
-]
-
-function DisplayCase() {
+function Spotlight() {
   return (
     <div className="relative mx-auto w-full max-w-[560px] overflow-hidden rounded-[2rem] border border-amber-300/25 bg-black/45 p-5 shadow-[0_35px_100px_rgba(37,8,68,0.7)] sm:p-7">
       <div className="absolute inset-x-[12%] top-0 h-px bg-gradient-to-r from-transparent via-amber-200/90 to-transparent" />
       <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.07),transparent_24%,transparent_70%,rgba(168,85,247,0.08))]" />
       <p className="relative mb-5 text-center text-[10px] font-extrabold uppercase tracking-[0.3em] text-amber-200/90">
-        Inside the chest · Arriving Dec 5
+        Inside the Chest · Item Spotlight
       </p>
-      <div className="relative grid gap-5">
-        {shelves.map((shelf, index) => (
-          <div
-            key={index}
-            className="flex items-end justify-center gap-5 border-b border-amber-200/20 pb-4 last:border-b-0 last:pb-0"
+      <div className="relative flex flex-col items-center gap-6 sm:flex-row sm:items-start">
+        <div className="aspect-square w-44 shrink-0 overflow-hidden rounded-2xl bg-black ring-1 ring-white/10 sm:w-48">
+          <img
+            src={allMightImage}
+            alt="All Might Anime Heroes figure"
+            className="h-full w-full object-contain"
+          />
+        </div>
+        <div className="min-w-0 text-center sm:text-left">
+          <h2 className="text-3xl font-black tracking-tight text-white">
+            All Might
+          </h2>
+          <p className="mt-1 text-xs font-bold uppercase tracking-[0.18em] text-purple-300">
+            Anime Heroes · My Hero Academia
+          </p>
+          <p className="mt-3 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+            <span className="text-xl font-extrabold text-amber-300">$29.99</span>
+            <span className="rounded-full border border-amber-300/40 bg-amber-300/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.14em] text-amber-200">
+              Arriving Dec 5
+            </span>
+          </p>
+          <p className="mt-4 text-sm leading-6 text-zinc-300">
+            Born Toshinori Yagi, All Might was once Quirkless. Nana Shimura
+            passed her Quirk, One For All, to him because she believed in his
+            dream of becoming a hero who could inspire hope. The power had been
+            passed down through generations, growing stronger with each
+            successor—and Toshinori carried it forward to become the Symbol of
+            Peace. Plus Ultra!
+          </p>
+          <Link
+            to="/product/anime-heroes-all-might"
+            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-amber-400 px-6 py-2.5 text-sm font-extrabold text-[#12091f] transition hover:bg-amber-300"
           >
-            {shelf.map((item) => (
-              <img
-                key={item.alt}
-                src={item.src}
-                alt={item.alt}
-                className="h-24 w-auto max-w-[30%] object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.55)] sm:h-28"
-                loading="lazy"
-              />
-            ))}
-          </div>
-        ))}
+            View this figure
+          </Link>
+        </div>
       </div>
     </div>
   )
@@ -114,7 +110,7 @@ export default function Hero() {
           </p>
         </div>
 
-        <DisplayCase />
+        <Spotlight />
       </div>
     </section>
   )
