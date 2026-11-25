@@ -7,3 +7,4 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Access-Control-Allow-Origin: https://mythic-chest.com
   Cross-Origin-Resource-Policy: same-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
