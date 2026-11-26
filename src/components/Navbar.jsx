@@ -18,7 +18,34 @@ const navLinks = [
     href: "/custom-apparel",
     match: (path) => path.startsWith("/custom"),
   },
+  {
+    label: "About Us",
+    href: "/about",
+    match: (path) => path === "/about",
+  },
 ]
+
+function VeteranBadge({ className = "" }) {
+  return (
+    <span
+      className={`items-center gap-1.5 rounded-full border border-amber-300/50 bg-amber-300/10 px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.14em] text-amber-200 ${className}`}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className="h-3.5 w-3.5 shrink-0 text-amber-300"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m12 3.2 2.7 5.5 6 .9-4.3 4.2 1 6-5.4-2.8-5.4 2.8 1-6L3.3 9.6l6-.9Z" />
+      </svg>
+      Veteran Owned
+    </span>
+  )
+}
 
 function SearchBar({ onNavigate }) {
   const [query, setQuery] = useState("")
@@ -180,6 +207,8 @@ export default function Navbar() {
           </div>
 
           <div className="ml-auto flex items-center gap-3">
+            <VeteranBadge className="hidden md:inline-flex" />
+
             <div className="hidden md:block">
               <SearchBar />
             </div>
@@ -234,6 +263,7 @@ export default function Navbar() {
 
         {isMenuOpen && (
           <div id="mobile-navigation" className="mt-4 grid gap-3 border-t border-white/10 pt-4 lg:hidden">
+            <VeteranBadge className="inline-flex w-fit" />
             <SearchBar onNavigate={() => setIsMenuOpen(false)} />
             <div className="grid gap-2 text-sm font-semibold uppercase tracking-wider">
               {navLinks.map((link) =>
