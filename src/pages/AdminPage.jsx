@@ -18,7 +18,39 @@ const GH_OWNER = "collins70535"
 const GH_REPO = "mythic-chest"
 const GH_BRANCH = "main"
 const GH_PATH = "public/admin/inventory.json"
+const GH_STOCK_PATH = "src/data/stockCounts.js"
 const TOKEN_KEY = "mc_admin_gh_token"
+
+// Public-safe projection of the inventory for the storefront's product
+// cards: catalog slug -> { available, total }. "available" is the current
+// qty for lines marked Received; lines not yet received show 0 available
+// (they are not in hand) with the ordered total. Only lines flagged
+// "listed" (live on the public catalog) are included, and no cost or
+// margin data ever appears in the projection.
+function buildStockCounts(items) {
+  const counts = {}
+  const listed = items
+    .filter((i) => i.listed && i.slug)
+    .sort((a, b) => String(a.slug).localeCompare(String(b.slug)))
+  for (const item of listed) {
+    const received = (item.status ?? "").startsWith("Received")
+    counts[item.slug] = {
+      available: received ? Number(item.qty) || 0 : 0,
+      total: Number(item.totalQty ?? item.qty) || 0,
+    }
+  }
+  return counts
+}
+
+function renderStockCounts(counts) {
+  return (
+    "// GENERATED FILE — do not edit by hand.\n" +
+    "// Public-safe stock counts projected from public/admin/inventory.json\n" +
+    "// by the /admin editor each time inventory is saved. Slugs and counts\n" +
+    "// only — no cost or margin data ever appears here.\n" +
+    `export default ${JSON.stringify(counts, null, 2)}\n`
+  )
+}
 
 const money = (value) =>
   value === null || value === undefined
@@ -181,6 +213,7 @@ export default function AdminPage() {
       vendor: item.vendor ?? "",
       order: item.order ?? "",
       qty: String(item.qty ?? ""),
+      totalQty: String(item.totalQty ?? item.qty ?? ""),
       unitCost: item.unitCost === null || item.unitCost === undefined ? "" : String(item.unitCost),
       landedUnitCost:
         item.landedUnitCost === null || item.landedUnitCost === undefined
@@ -217,16 +250,25 @@ export default function AdminPage() {
       const qty = Number(draft.qty)
       if (!Number.isInteger(qty) || qty < 0)
         throw new Error("Qty must be a whole number, 0 or more.")
+      const totalQty = Number(draft.totalQty)
+      if (!Number.isInteger(totalQty) || totalQty < 0)
+        throw new Error("Total must be a whole number, 0 or more.")
+      if (totalQty < qty)
+        throw new Error("Total can't be less than the current qty.")
       const unitCost = parseOptionalNumber(draft.unitCost, "Unit cost")
       const landedUnitCost = parseOptionalNumber(draft.landedUnitCost, "Landed cost")
       const retailPrice = parseOptionalNumber(draft.retailPrice, "Retail price")
       const proposedPrice = parseOptionalNumber(draft.proposedPrice, "Proposed price")
+      const orig = items[editingIndex] ?? {}
       const updated = {
         item: draft.item.trim(),
         category: draft.category.trim(),
         vendor: draft.vendor.trim(),
         order: draft.order.trim(),
         qty,
+        totalQty,
+        slug: orig.slug ?? "",
+        listed: !!orig.listed,
         unitCost,
         landedUnitCost,
         retailPrice,
@@ -254,6 +296,9 @@ export default function AdminPage() {
       vendor: "",
       order: "",
       qty: 0,
+      totalQty: 0,
+      slug: "",
+      listed: false,
       unitCost: null,
       landedUnitCost: null,
       retailPrice: null,
@@ -322,40 +367,64 @@ export default function AdminPage() {
       Accept: "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28",
     }
-    const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`
-    try {
+
+    async function putGitHubFile(path, text, message) {
+      const url = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`
       const getRes = await fetch(`${url}?ref=${GH_BRANCH}`, { headers })
       if (getRes.status === 401 || getRes.status === 403)
         throw new Error(
           "GitHub rejected the token. Make sure it's a fine-grained token for the mythic-chest repo with Contents set to Read and write, then reconnect it below.",
         )
-      if (!getRes.ok) throw new Error(`GitHub read failed (HTTP ${getRes.status}).`)
-      const { sha } = await getRes.json()
-
-      const payload = { ...data, totals: computeTotals(items) }
-      const content = toBase64Utf8(JSON.stringify(payload, null, 2) + "\n")
+      let sha
+      if (getRes.ok) {
+        ;({ sha } = await getRes.json())
+      } else if (getRes.status !== 404) {
+        throw new Error(`GitHub read failed (HTTP ${getRes.status}).`)
+      }
       const putRes = await fetch(url, {
         method: "PUT",
         headers: { ...headers, "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: "Inventory update from mythic-chest.com/admin editor",
-          content,
-          sha,
+          message,
+          content: toBase64Utf8(text),
+          ...(sha ? { sha } : {}),
           branch: GH_BRANCH,
         }),
       })
       if (putRes.status === 409 || putRes.status === 422)
         throw new Error(
-          "The inventory file changed on GitHub since this page loaded, so your save was stopped to avoid overwriting it. Reload the page, redo the edit, and save again.",
+          "A file changed on GitHub since this page loaded, so your save was stopped to avoid overwriting it. Reload the page, redo the edit, and save again.",
         )
       if (!putRes.ok) throw new Error(`GitHub save failed (HTTP ${putRes.status}).`)
-      const result = await putRes.json()
+      return putRes.json()
+    }
+
+    try {
+      const payload = { ...data, totals: computeTotals(items) }
+      const result = await putGitHubFile(
+        GH_PATH,
+        JSON.stringify(payload, null, 2) + "\n",
+        "Inventory update from mythic-chest.com/admin editor",
+      )
+      // Keep the storefront's public stock counts in sync with the counts
+      // just saved. Only slugs and counts are written — never cost data.
+      try {
+        await putGitHubFile(
+          GH_STOCK_PATH,
+          renderStockCounts(buildStockCounts(payload.items)),
+          "Sync public stock counts from inventory save",
+        )
+      } catch (stockErr) {
+        throw new Error(
+          `Inventory saved (commit ${result.commit.sha.slice(0, 7)}), but the public stock-counts file did not update: ${stockErr.message} Save again to retry the counts sync.`,
+        )
+      }
       setOriginal(payload)
       setData(payload)
       setDirty(false)
       setSaveState({
         status: "saved",
-        message: `Saved to GitHub (commit ${result.commit.sha.slice(0, 7)}). Cloudflare Pages redeploys automatically — the live page updates in about 1–2 minutes.`,
+        message: `Saved to GitHub (commit ${result.commit.sha.slice(0, 7)}), including the public stock counts. Cloudflare Pages redeploys automatically — the live pages update in about 1–2 minutes.`,
       })
     } catch (err) {
       setSaveState({ status: "error", message: err.message })
@@ -383,7 +452,11 @@ export default function AdminPage() {
           visible only behind the Cloudflare Access login; this data is not
           part of the public site bundle. You can edit any line here — edits
           are saved to GitHub and go live when Cloudflare Pages redeploys
-          (about 1–2 minutes after saving).
+          (about 1–2 minutes after saving). Saving also refreshes the
+          available/total counts on the public product cards for listed
+          lines — Qty is the available count, Total is how many were
+          received (or ordered, for lines not yet in). Only counts are
+          published, never costs.
         </p>
 
         {error && (
@@ -551,6 +624,7 @@ export default function AdminPage() {
                     <th className="px-4 py-3">Category</th>
                     <th className="px-4 py-3">Vendor / Order</th>
                     <th className="px-4 py-3 text-right">Qty</th>
+                    <th className="px-4 py-3 text-right">Total</th>
                     <th className="px-4 py-3 text-right">Unit cost</th>
                     <th className="px-4 py-3 text-right">Landed</th>
                     <th className="px-4 py-3 text-right">Retail</th>
@@ -570,7 +644,8 @@ export default function AdminPage() {
                           {draftField("vendor", { "aria-label": "Vendor" })}
                           <div className="mt-2">{draftField("order", { "aria-label": "Order" })}</div>
                         </td>
-                        <td className="w-20 px-4 py-3">{draftField("qty", { type: "number", min: "0", step: "1", "aria-label": "Quantity" })}</td>
+                        <td className="w-20 px-4 py-3">{draftField("qty", { type: "number", min: "0", step: "1", "aria-label": "Quantity available" })}</td>
+                        <td className="w-20 px-4 py-3">{draftField("totalQty", { type: "number", min: "0", step: "1", "aria-label": "Total received or ordered" })}</td>
                         <td className="w-24 px-4 py-3">{draftField("unitCost", { type: "number", min: "0", step: "0.01", "aria-label": "Unit cost" })}</td>
                         <td className="w-24 px-4 py-3">{draftField("landedUnitCost", { type: "number", min: "0", step: "0.01", "aria-label": "Landed unit cost" })}</td>
                         <td className="min-w-32 px-4 py-3">
@@ -638,6 +713,7 @@ export default function AdminPage() {
                           <span className="block text-xs text-zinc-500">{item.order}</span>
                         </td>
                         <td className="px-4 py-3 text-right">{item.qty}</td>
+                        <td className="px-4 py-3 text-right text-zinc-400">{item.totalQty ?? item.qty}</td>
                         <td className="px-4 py-3 text-right text-zinc-400">{money(item.unitCost)}</td>
                         <td className="px-4 py-3 text-right text-zinc-400">{money(item.landedUnitCost)}</td>
                         <td className="px-4 py-3 text-right">{priceCell(item)}</td>
