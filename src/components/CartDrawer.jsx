@@ -152,6 +152,11 @@ export default function CartDrawer() {
                 <span>Total</span>
                 <span className="text-blue-400">${cartTotal.toFixed(2)}</span>
               </div>
+              <p className="mb-5 rounded-xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm leading-6 text-amber-100">
+                <strong>All sales are final.</strong> No returns, refunds, or
+                exchanges — please review your items before completing your
+                purchase.
+              </p>
               {COMING_SOON ? (
                 <div className="grid gap-3">
                   <p className="rounded-xl border border-blue-400/30 bg-blue-500/10 px-4 py-3 text-center text-sm text-blue-100">

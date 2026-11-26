@@ -126,6 +126,11 @@ export default function CheckoutPage() {
               <p className="text-xs leading-5 text-zinc-500">
                 Applicable taxes are calculated during secure checkout.
               </p>
+              <p className="rounded-xl border border-amber-300/30 bg-amber-300/10 px-4 py-3 text-sm leading-6 text-amber-100">
+                <strong>All sales are final.</strong> No returns, refunds, or
+                exchanges — please review your items before completing your
+                purchase.
+              </p>
             </div>
 
             {COMING_SOON ? (
