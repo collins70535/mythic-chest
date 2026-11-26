@@ -1,7 +1,6 @@
 import FeaturedSection from "../components/FeaturedSection"
 import Hero from "../components/Hero"
 import TrustBar from "../components/TrustBar"
-import AboutPreview from "../components/AboutPreview"
 
 export default function HomePage() {
   return (
@@ -9,7 +8,6 @@ export default function HomePage() {
       <Hero />
       <TrustBar />
       <FeaturedSection />
-      <AboutPreview />
     </main>
   )
 }
