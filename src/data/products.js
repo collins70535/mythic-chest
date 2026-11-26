@@ -35,6 +35,9 @@ import McfarlaneAvatarZuko7InImage from "../assets/products/mcfarlane-avatar-zuk
 import McfarlaneDemonSlayerGyomei5InImage from "../assets/products/mcfarlane-demon-slayer-gyomei-5in.jpg"
 import MegoMinixNarutoImage from "../assets/products/mego-minix-naruto.webp"
 import MegoMinixSasukeImage from "../assets/products/mego-minix-sasuke.webp"
+import HgRedGundamGquuuuuuxImage from "../assets/products/hg-red-gundam-gquuuuuux.jpg"
+import RgAileStrikeGundamImage from "../assets/products/rg-aile-strike-gundam.webp"
+import HgZakuMarinerImage from "../assets/products/hg-zaku-mariner.webp"
 
 const products = [
   {
@@ -695,6 +698,66 @@ const products = [
       "Available first at the Hometown Christmas Market — Dec 5, Cleveland Civic Center",
     ],
     image: BlokeesTransformersGv05Image,
+  },
+
+  {
+    id: 41,
+    slug: "hg-red-gundam-gquuuuuux",
+    categoryId: "model-kits",
+    category: "Model Kits",
+    series: "Mobile Suit Gundam GQuuuuuuX",
+    grade: "HG Model Kit",
+    name: "Red Gundam (HG 1/144)",
+    price: "$31.00",
+    stock: "Arriving for Dec 5",
+    description:
+      "The Red Gundam from Mobile Suit Gundam GQuuuuuuX as a 1/144 High Grade snap-fit kit — no glue or paint needed. A striking centerpiece build from the newest Gundam series.",
+    features: [
+      "Snap-fit build — no glue required",
+      "1/144 scale High Grade kit",
+      "Available first at the Hometown Christmas Market — Dec 5, Cleveland Civic Center",
+    ],
+    image: HgRedGundamGquuuuuuxImage,
+  },
+
+  {
+    id: 42,
+    slug: "rg-aile-strike-gundam",
+    categoryId: "model-kits",
+    category: "Model Kits",
+    series: "Mobile Suit Gundam SEED",
+    grade: "RG Model Kit",
+    name: "Aile Strike Gundam (RG 1/144)",
+    price: "$35.00",
+    stock: "Arriving for Dec 5",
+    description:
+      "The GAT-X105+AQM/E-X01 Aile Strike Gundam from Mobile Suit Gundam SEED as a 1/144 Real Grade kit — inner-frame engineering and sharp detail in a compact build.",
+    features: [
+      "Real Grade inner frame detail",
+      "1/144 scale",
+      "Available first at the Hometown Christmas Market — Dec 5, Cleveland Civic Center",
+    ],
+    image: RgAileStrikeGundamImage,
+  },
+
+  {
+    id: 43,
+    slug: "hg-zaku-mariner",
+    categoryId: "model-kits",
+    category: "Model Kits",
+    series: "Mobile Suit Gundam ZZ",
+    grade: "HG Model Kit",
+    name: "Zaku Mariner (HG 1/144)",
+    price: "$20.00",
+    stock: "Arriving for Dec 5",
+    description:
+      "The RMS-192M Zaku Mariner from Mobile Suit Gundam ZZ as a 1/144 High Grade snap-fit kit — the amphibious Zaku variant, and an easy build for new Gunpla fans.",
+    features: [
+      "Snap-fit build — no glue required",
+      "1/144 scale High Grade kit",
+      "Available first at the Hometown Christmas Market — Dec 5, Cleveland Civic Center",
+    ],
+    image: HgZakuMarinerImage,
   },
 
   {

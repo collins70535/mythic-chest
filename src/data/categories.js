@@ -8,9 +8,9 @@ const categories = [
   {
     id: "model-kits",
     name: "Model Kits",
-    eyebrow: "Blokees / snap-build kits",
+    eyebrow: "Gunpla / snap-build kits",
     description:
-      "Blokees figure kits and snap-build favorites — buildable pieces with classic shelf presence.",
+      "Gundam HG and RG Gunpla plus Blokees figure kits — snap-build favorites with classic shelf presence.",
     image: gundamModelsImage,
     href: "/collections/model-kits",
   },
