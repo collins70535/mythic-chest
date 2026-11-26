@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom"
 import { useCart } from "../context/useCart"
 import { COMING_SOON } from "../config/comingSoon"
 import products from "../data/products"
+import stockCounts from "../data/stockCounts"
 
 export default function ProductPage() {
   const { slug } = useParams()
@@ -10,6 +11,7 @@ export default function ProductPage() {
   const product = products.find(
     (item) => item.slug === slug
   )
+  const counts = product ? stockCounts[product.slug] : undefined
 
   if (!product) {
     return (
@@ -51,6 +53,15 @@ export default function ProductPage() {
             <span className="rounded-full border border-white/10 px-4 py-2">
               {product.stock}
             </span>
+            {counts && (
+              <span
+                className="rounded-full border border-white/10 px-4 py-2"
+                title={`${counts.available} of ${counts.total} available`}
+                aria-label={`${counts.available} of ${counts.total} available`}
+              >
+                {counts.available}/{counts.total}
+              </span>
+            )}
           </div>
 
           <p className="text-zinc-400 text-lg mb-8">

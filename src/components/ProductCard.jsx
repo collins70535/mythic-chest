@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom"
 import { useCart } from "../context/useCart"
 import { COMING_SOON } from "../config/comingSoon"
+import stockCounts from "../data/stockCounts"
 
 export default function ProductCard({ product }) {
   const { addItem } = useCart()
+  const counts = stockCounts[product.slug]
 
   return (
     <article className="glow-card flex h-full flex-col overflow-hidden rounded-2xl">
@@ -34,6 +36,15 @@ export default function ProductCard({ product }) {
           <span className="rounded-full border border-white/10 px-3 py-1">
             {product.stock}
           </span>
+          {counts && (
+            <span
+              className="rounded-full border border-white/10 px-3 py-1"
+              title={`${counts.available} of ${counts.total} available`}
+              aria-label={`${counts.available} of ${counts.total} available`}
+            >
+              {counts.available}/{counts.total}
+            </span>
+          )}
         </div>
 
         <p className={`mt-2 text-xl ${COMING_SOON && product.placeholderPrice ? "text-zinc-400 line-through" : "text-amber-300"}`}>
