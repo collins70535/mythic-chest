@@ -153,6 +153,7 @@ export default function AdminPage() {
           if (vendor !== "all" && item.vendor !== vendor) return false
           if (stockStatus === "transit" && !item.status.startsWith("In transit")) return false
           if (stockStatus === "awaiting" && !item.status.startsWith("Awaiting payment")) return false
+          if (stockStatus === "received" && !item.status.startsWith("Received")) return false
           if (
             query &&
             !`${item.item} ${item.category} ${item.order}`
@@ -442,6 +443,7 @@ export default function AdminPage() {
                 className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm"
               >
                 <option value="all">All statuses</option>
+                <option value="received">Received</option>
                 <option value="transit">In transit</option>
                 <option value="awaiting">Awaiting payment</option>
               </select>
